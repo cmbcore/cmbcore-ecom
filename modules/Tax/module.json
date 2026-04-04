@@ -1,0 +1,30 @@
+{
+  "name": "Thuế",
+  "alias": "tax",
+  "version": "1.0.0",
+  "description": "Bảng thuế theo khu vực và tính toán vào đơn hàng.",
+  "order": 29,
+  "enabled": true,
+  "dependencies": [
+    "order"
+  ],
+  "providers": [
+    "Modules\\Tax\\Providers\\TaxServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Thuế",
+        "icon": "fa-solid fa-percent",
+        "route": "/admin/tax-rates"
+      }
+    ],
+    "pages": {
+      "/admin/tax-rates": "modules/Tax/Resources/js/pages/TaxRateList.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

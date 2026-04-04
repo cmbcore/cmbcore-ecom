@@ -1,0 +1,28 @@
+{
+  "name": "Hệ thống",
+  "alias": "system",
+  "version": "1.0.0",
+  "description": "Module khởi động lõi hệ thống",
+  "order": 1,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\System\\Providers\\SystemServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Cài đặt",
+        "icon": "fa-solid fa-sliders",
+        "route": "/admin/settings"
+      }
+    ],
+    "pages": {
+      "/admin/settings": "modules/System/Resources/js/pages/SystemSettings.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

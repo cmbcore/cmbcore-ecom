@@ -1,0 +1,61 @@
+{
+  "name": "Bài viết",
+  "name_key": "admin.modules.blog.name",
+  "alias": "blog",
+  "version": "1.1.0",
+  "description": "Quản lý bài viết blog, chuyên mục storefront và SEO",
+  "description_key": "admin.modules.blog.description",
+  "order": 40,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\Blog\\Providers\\BlogServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Bài viết",
+        "translation_key": "admin.modules.blog.menu",
+        "icon": "fa-solid fa-newspaper",
+        "route": "/admin/blog/posts",
+        "permission": "blog.view",
+        "children": [
+          {
+            "label": "Danh sách bài viết",
+            "translation_key": "admin.modules.blog.list",
+            "route": "/admin/blog/posts",
+            "permission": "blog.view"
+          },
+          {
+            "label": "Thêm bài viết",
+            "translation_key": "admin.modules.blog.create",
+            "route": "/admin/blog/posts/create",
+            "permission": "blog.create"
+          },
+          {
+            "label": "Chuyên mục",
+            "translation_key": "admin.modules.blog.categories",
+            "route": "/admin/blog/categories",
+            "permission": "blog.view"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/blog/posts": "modules/Blog/Resources/js/pages/BlogList.jsx",
+      "/admin/blog/posts/create": "modules/Blog/Resources/js/pages/BlogCreate.jsx",
+      "/admin/blog/posts/:id/edit": "modules/Blog/Resources/js/pages/BlogEdit.jsx",
+      "/admin/blog/categories": "modules/Blog/Resources/js/pages/BlogCategoryList.jsx",
+      "/admin/blog/categories/create": "modules/Blog/Resources/js/pages/BlogCategoryCreate.jsx",
+      "/admin/blog/categories/:id/edit": "modules/Blog/Resources/js/pages/BlogCategoryEdit.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "blog.created",
+      "blog.updated",
+      "blog.deleted"
+    ],
+    "listens": []
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Đánh giá",
+  "alias": "review",
+  "version": "1.0.0",
+  "description": "Đánh giá sản phẩm, xác thực đã mua và duyệt review.",
+  "order": 31,
+  "enabled": true,
+  "dependencies": [
+    "product",
+    "order",
+    "customer"
+  ],
+  "providers": [
+    "Modules\\Review\\Providers\\ReviewServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Đánh giá",
+        "icon": "fa-solid fa-star",
+        "route": "/admin/reviews"
+      }
+    ],
+    "pages": {
+      "/admin/reviews": "modules/Review/Resources/js/pages/ReviewModeration.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

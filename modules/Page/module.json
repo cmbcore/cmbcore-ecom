@@ -1,0 +1,52 @@
+{
+  "name": "Trang tĩnh",
+  "name_key": "admin.modules.page.name",
+  "alias": "page",
+  "version": "1.0.0",
+  "description": "Quản lý trang tĩnh storefront, template và SEO",
+  "description_key": "admin.modules.page.description",
+  "order": 50,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\Page\\Providers\\PageServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Trang tĩnh",
+        "translation_key": "admin.modules.page.menu",
+        "icon": "fa-solid fa-file-lines",
+        "route": "/admin/pages",
+        "permission": "pages.view",
+        "children": [
+          {
+            "label": "Danh sách trang",
+            "translation_key": "admin.modules.page.list",
+            "route": "/admin/pages",
+            "permission": "pages.view"
+          },
+          {
+            "label": "Thêm trang",
+            "translation_key": "admin.modules.page.create",
+            "route": "/admin/pages/create",
+            "permission": "pages.create"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/pages": "modules/Page/Resources/js/pages/PageList.jsx",
+      "/admin/pages/create": "modules/Page/Resources/js/pages/PageCreate.jsx",
+      "/admin/pages/:id/edit": "modules/Page/Resources/js/pages/PageEdit.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "page.created",
+      "page.updated",
+      "page.deleted"
+    ],
+    "listens": []
+  }
+}

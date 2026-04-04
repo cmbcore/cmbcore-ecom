@@ -1,0 +1,26 @@
+{
+  "name": "Giỏ hàng",
+  "name_key": "admin.modules.cart.name",
+  "alias": "cart",
+  "version": "1.0.0",
+  "description": "Giỏ hàng storefront cho guest và customer",
+  "description_key": "admin.modules.cart.description",
+  "order": 22,
+  "enabled": true,
+  "dependencies": [
+    "product"
+  ],
+  "providers": [
+    "Modules\\Cart\\Providers\\CartServiceProvider"
+  ],
+  "admin": {
+    "menu": [],
+    "pages": {}
+  },
+  "hooks": {
+    "fires": [
+      "cart.converted"
+    ],
+    "listens": []
+  }
+}

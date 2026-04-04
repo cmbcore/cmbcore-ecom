@@ -1,0 +1,28 @@
+{
+  "name": "Vận chuyển",
+  "alias": "shipping",
+  "version": "1.0.0",
+  "description": "Quản lý khu vực giao hàng và bảng phí ship.",
+  "order": 26,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\Shipping\\Providers\\ShippingServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Vận chuyển",
+        "icon": "fa-solid fa-truck-fast",
+        "route": "/admin/shipping"
+      }
+    ],
+    "pages": {
+      "/admin/shipping": "modules/Shipping/Resources/js/pages/ShippingSettings.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

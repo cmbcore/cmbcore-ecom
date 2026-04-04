@@ -1,0 +1,31 @@
+{
+  "name": "Flash Sale",
+  "alias": "flash_sale",
+  "version": "1.0.0",
+  "description": "Giá giảm theo thời gian, countdown và giới hạn số lượng.",
+  "order": 41,
+  "enabled": true,
+  "dependencies": [
+    "product",
+    "order"
+  ],
+  "providers": [
+    "Modules\\FlashSale\\Providers\\FlashSaleServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Flash Sale",
+        "icon": "fa-solid fa-bolt",
+        "route": "/admin/flash-sales"
+      }
+    ],
+    "pages": {
+      "/admin/flash-sales": "modules/FlashSale/Resources/js/pages/FlashSaleList.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

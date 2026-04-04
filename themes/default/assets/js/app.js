@@ -1,0 +1,1 @@
+// Placeholder theme JS entry for Phase 3.

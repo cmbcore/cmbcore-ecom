@@ -1,0 +1,31 @@
+{
+  "name": "Tim kiem",
+  "alias": "search",
+  "version": "1.0.0",
+  "description": "Tìm kiếm nâng cao, suggestion và thống kê từ khóa.",
+  "order": 34,
+  "enabled": true,
+  "dependencies": [
+    "product",
+    "category"
+  ],
+  "providers": [
+    "Modules\\Search\\Providers\\SearchServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Search Analytics",
+        "icon": "fa-solid fa-magnifying-glass-chart",
+        "route": "/admin/search-analytics"
+      }
+    ],
+    "pages": {
+      "/admin/search-analytics": "modules/Search/Resources/js/pages/SearchAnalytics.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

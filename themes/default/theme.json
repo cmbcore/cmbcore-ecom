@@ -1,0 +1,360 @@
+{
+  "name": "Theme Default Fresh",
+  "alias": "default",
+  "version": "2.0.0",
+  "description": "Storefront mặc định sáng, đầy đủ flow e-commerce và bám đúng contract module hiện tại.",
+  "author": "CMBCORE",
+  "supports": ["products", "blog", "pages", "promotions"],
+  "settings": [
+    {
+      "group": "colors",
+      "label": "Màu sắc",
+      "fields": [
+        {
+          "key": "primary_color",
+          "label": "Màu nhấn",
+          "type": "color",
+          "default": "#0d9488"
+        },
+        {
+          "key": "primary_hover",
+          "label": "Màu nhấn hover",
+          "type": "color",
+          "default": "#0f766e"
+        },
+        {
+          "key": "accent_soft",
+          "label": "Màu nền nhấn",
+          "type": "color",
+          "default": "#ccfbf1"
+        },
+        {
+          "key": "secondary_color",
+          "label": "Màu tiêu đề",
+          "type": "color",
+          "default": "#0f172a"
+        },
+        {
+          "key": "surface_alt",
+          "label": "Nền phụ",
+          "type": "color",
+          "default": "#f8fafc"
+        }
+      ]
+    },
+    {
+      "group": "branding",
+      "label": "Thương hiệu",
+      "fields": [
+        {
+          "key": "logo_image",
+          "label": "Logo",
+          "type": "image",
+          "default": null
+        },
+        {
+          "key": "logo_text",
+          "label": "Tên thương hiệu",
+          "type": "text",
+          "default": "CMBCORE Store"
+        },
+        {
+          "key": "announcement_text",
+          "label": "Thông báo đầu trang",
+          "type": "text",
+          "default": "Miễn phí giao hàng cho đơn từ 499.000đ"
+        },
+        {
+          "key": "announcement_link_label",
+          "label": "CTA đầu trang",
+          "type": "text",
+          "default": "Xem ưu đãi"
+        },
+        {
+          "key": "announcement_link_url",
+          "label": "Link CTA đầu trang",
+          "type": "text",
+          "default": "/san-pham"
+        }
+      ]
+    },
+    {
+      "group": "layout",
+      "label": "Bố cục",
+      "fields": [
+        {
+          "key": "products_per_page",
+          "label": "Sản phẩm mỗi trang",
+          "type": "number",
+          "default": 12,
+          "min": 4,
+          "max": 48
+        },
+        {
+          "key": "blog_posts_per_page",
+          "label": "Bài viết mỗi trang",
+          "type": "number",
+          "default": 9,
+          "min": 3,
+          "max": 24
+        },
+        {
+          "key": "home_products_per_section",
+          "label": "Sản phẩm mỗi block trang chủ",
+          "type": "number",
+          "default": 8,
+          "min": 4,
+          "max": 12
+        },
+        {
+          "key": "home_posts_per_section",
+          "label": "Bài viết mỗi block trang chủ",
+          "type": "number",
+          "default": 4,
+          "min": 3,
+          "max": 8
+        }
+      ]
+    },
+    {
+      "group": "home",
+      "label": "Trang chủ",
+      "fields": [
+        {
+          "key": "hero_kicker",
+          "label": "Eyebrow hero",
+          "type": "text",
+          "default": "Storefront mặc định mới"
+        },
+        {
+          "key": "hero_title",
+          "label": "Tiêu đề hero",
+          "type": "text",
+          "default": "Bố cục sáng, gọn và đủ toàn bộ luồng mua hàng."
+        },
+        {
+          "key": "hero_description",
+          "label": "Mô tả hero",
+          "type": "textarea",
+          "default": "Theme default mới tập trung vào catalog, checkout và account để storefront có thể bật lên là chạy ngay với toàn bộ module cốt lõi."
+        },
+        {
+          "key": "hero_primary_label",
+          "label": "Nút chính hero",
+          "type": "text",
+          "default": "Mua sắm ngay"
+        },
+        {
+          "key": "hero_primary_url",
+          "label": "Link nút chính hero",
+          "type": "text",
+          "default": "/san-pham"
+        },
+        {
+          "key": "hero_secondary_label",
+          "label": "Nút phụ hero",
+          "type": "text",
+          "default": "Đọc bài viết"
+        },
+        {
+          "key": "hero_secondary_url",
+          "label": "Link nút phụ hero",
+          "type": "text",
+          "default": "/bai-viet"
+        },
+        {
+          "key": "home_best_sellers_title",
+          "label": "Tiêu đề bán chạy",
+          "type": "text",
+          "default": "Bán chạy nhất"
+        },
+        {
+          "key": "home_latest_products_title",
+          "label": "Tiêu đề sản phẩm mới",
+          "type": "text",
+          "default": "Sản phẩm mới"
+        },
+        {
+          "key": "home_latest_posts_title",
+          "label": "Tiêu đề bài viết mới",
+          "type": "text",
+          "default": "Bài viết mới"
+        },
+        {
+          "key": "home_hero_slides",
+          "label": "Hero slides",
+          "type": "repeater",
+          "fields": [
+            { "key": "desktop", "label": "Ảnh desktop", "type": "image", "default": null },
+            { "key": "mobile", "label": "Ảnh mobile", "type": "image", "default": null },
+            { "key": "alt", "label": "Alt ảnh", "type": "text", "default": "" },
+            { "key": "title", "label": "Tiêu đề slide", "type": "text", "default": "" },
+            { "key": "body", "label": "Mô tả slide", "type": "textarea", "default": "" },
+            { "key": "link_url", "label": "Link slide", "type": "text", "default": "" },
+            {
+              "key": "link_target",
+              "label": "Kiểu mở",
+              "type": "select",
+              "default": "_self",
+              "options": [
+                { "label": "Cùng tab", "value": "_self" },
+                { "label": "Tab mới", "value": "_blank" }
+              ]
+            }
+          ],
+          "default": []
+        },
+        {
+          "key": "home_quote_cards",
+          "label": "Quote cards",
+          "type": "repeater",
+          "fields": [
+            { "key": "title", "label": "Tiêu đề", "type": "text", "default": "" },
+            { "key": "quote", "label": "Nội dung", "type": "textarea", "default": "" },
+            { "key": "link_label", "label": "Nhãn nút", "type": "text", "default": "" },
+            { "key": "url", "label": "Link", "type": "text", "default": "" }
+          ],
+          "default": [
+            {
+              "title": "Catalog rõ ràng",
+              "quote": "Filter, swatch, countdown và CTA được giữ trong một nhịp đọc ngắn để khách tìm nhanh và chốt nhanh.",
+              "link_label": "Xem catalog",
+              "url": "/san-pham"
+            },
+            {
+              "title": "Checkout không vòng vo",
+              "quote": "Guest checkout, địa chỉ đã lưu, ship, coupon và COD được đưa vào cùng một form dễ scan trên cả desktop lẫn mobile.",
+              "link_label": "Đi tới thanh toán",
+              "url": "/thanh-toan"
+            },
+            {
+              "title": "Account có đủ công cụ",
+              "quote": "Từ hồ sơ, địa chỉ, đơn hàng, wishlist tới đánh giá đều nằm chung trong một hệ storefront đồng nhất.",
+              "link_label": "Mở tài khoản",
+              "url": "/tai-khoan"
+            }
+          ]
+        },
+        {
+          "key": "home_testimonials",
+          "label": "Đánh giá khách hàng",
+          "type": "repeater",
+          "fields": [
+            { "key": "name", "label": "Tên khách", "type": "text", "default": "" },
+            { "key": "rating", "label": "Số sao", "type": "number", "default": 5, "min": 1, "max": 5 },
+            { "key": "text", "label": "Nhận xét", "type": "textarea", "default": "" }
+          ],
+          "default": [
+            { "name": "Minh Anh", "rating": 5, "text": "Trải nghiệm xem catalog và chốt đơn trên mobile rất mượt." },
+            { "name": "Hoàng Nam", "rating": 5, "text": "Giá, flash sale và biến thể hiển thị rõ nên quyết định mua nhanh hơn nhiều." },
+            { "name": "Thu Hà", "rating": 4, "text": "Khu tài khoản gọn, đủ để theo dõi đơn và quản lý địa chỉ mà không bị rối." }
+          ]
+        },
+        {
+          "key": "home_procedure_steps",
+          "label": "Quy trình",
+          "type": "repeater",
+          "fields": [
+            { "key": "title", "label": "Tiêu đề", "type": "text", "default": "" },
+            { "key": "text", "label": "Mô tả", "type": "textarea", "default": "" }
+          ],
+          "default": [
+            { "name": "", "title": "Khám phá nhanh", "text": "Hero và category entry point được làm gọn để dẫn vào đúng nhu cầu mua hàng." },
+            { "name": "", "title": "Xem sản phẩm", "text": "Product card, filter và detail page dùng chung contract dữ liệu nên ít sai lệch hơn giữa admin và storefront." },
+            { "name": "", "title": "Thanh toán", "text": "Checkout hỗ trợ guest và tài khoản, vẫn giữ đầy đủ ship, coupon, COD." },
+            { "name": "", "title": "Theo dõi sau mua", "text": "Tài khoản có đơn hàng, đánh giá, đổi trả và wishlist trong một luồng liền mạch." }
+          ]
+        },
+        {
+          "key": "home_register_panel",
+          "label": "CTA cuối trang",
+          "type": "object",
+          "fields": [
+            { "key": "title", "label": "Tiêu đề", "type": "text", "default": "" },
+            { "key": "body", "label": "Mô tả", "type": "textarea", "default": "" },
+            { "key": "primary_label", "label": "Nút chính", "type": "text", "default": "" },
+            { "key": "primary_url", "label": "Link nút chính", "type": "text", "default": "" },
+            { "key": "secondary_label", "label": "Nút phụ", "type": "text", "default": "" },
+            { "key": "secondary_url", "label": "Link nút phụ", "type": "text", "default": "" },
+            { "key": "bullet_points", "label": "Điểm nổi bật", "type": "tags", "default": [] }
+          ],
+          "default": {
+            "title": "Storefront mặc định mới sẵn sàng để dùng thật.",
+            "body": "Từ home tới account, các flow quan trọng đều được chuẩn hóa để không cần dựng lại khi đổi theme hoặc mở rộng plugin.",
+            "primary_label": "Mở catalog",
+            "primary_url": "/san-pham",
+            "secondary_label": "Đi tới tài khoản",
+            "secondary_url": "/tai-khoan",
+            "bullet_points": [
+              "Catalog, cart, checkout và account đi cùng một hệ layout",
+              "Không phụ thuộc framework CSS ngoài",
+              "Dùng đúng helper route, text và theme setting của hệ thống"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "group": "mobile",
+      "label": "Mobile toolbar",
+      "fields": [
+        {
+          "key": "mobile_toolbar_items",
+          "label": "Danh sách shortcut",
+          "type": "repeater",
+          "fields": [
+            { "key": "label", "label": "Nhãn", "type": "text", "default": "" },
+            { "key": "url", "label": "Liên kết", "type": "text", "default": "" },
+            { "key": "icon", "label": "Font icon", "type": "text", "default": "fa-solid fa-house" },
+            {
+              "key": "target",
+              "label": "Kiểu mở",
+              "type": "select",
+              "default": "_self",
+              "options": [
+                { "label": "Cùng tab", "value": "_self" },
+                { "label": "Tab mới", "value": "_blank" }
+              ]
+            }
+          ],
+          "default": [
+            { "label": "Trang chủ", "url": "/", "icon": "fa-solid fa-house", "target": "_self" },
+            { "label": "Sản phẩm", "url": "/san-pham", "icon": "fa-solid fa-bag-shopping", "target": "_self" },
+            { "label": "Tìm kiếm", "url": "/tim-kiem", "icon": "fa-solid fa-magnifying-glass", "target": "_self" },
+            { "label": "Yêu thích", "url": "/yeu-thich", "icon": "fa-regular fa-heart", "target": "_self" },
+            { "label": "Tài khoản", "url": "/tai-khoan", "icon": "fa-regular fa-user", "target": "_self" }
+          ]
+        }
+      ]
+    }
+  ],
+  "templates": {
+    "page": [
+      { "name": "default", "label": "Mặc định" }
+    ]
+  },
+  "menus": [
+    {
+      "alias": "main_menu",
+      "label": "Menu chính",
+      "description": "Điều hướng đầu trang storefront",
+      "items": [
+        { "label": { "vi": "Trang chủ", "en": "Home" }, "url": "/", "icon": "fa-solid fa-house", "target": "_self" },
+        { "label": { "vi": "Sản phẩm", "en": "Products" }, "url": "/san-pham", "icon": "fa-solid fa-bag-shopping", "target": "_self" },
+        { "label": { "vi": "Tin tức", "en": "Blog" }, "url": "/bai-viet", "icon": "fa-solid fa-newspaper", "target": "_self" },
+        { "label": { "vi": "Tài khoản", "en": "Account" }, "url": "/tai-khoan", "icon": "fa-regular fa-user", "target": "_self" }
+      ]
+    },
+    {
+      "alias": "footer_menu",
+      "label": "Menu footer",
+      "description": "Nhóm link chung ở footer",
+      "items": [
+        { "label": { "vi": "Tìm kiếm", "en": "Search" }, "url": "/tim-kiem", "icon": "fa-solid fa-magnifying-glass", "target": "_self" },
+        { "label": { "vi": "Giỏ hàng", "en": "Cart" }, "url": "/gio-hang", "icon": "fa-solid fa-cart-shopping", "target": "_self" },
+        { "label": { "vi": "Thanh toán", "en": "Checkout" }, "url": "/thanh-toan", "icon": "fa-solid fa-credit-card", "target": "_self" },
+        { "label": { "vi": "Đăng nhập", "en": "Login" }, "url": "/tai-khoan/dang-nhap", "icon": "fa-solid fa-right-to-bracket", "target": "_self" }
+      ]
+    }
+  ]
+}

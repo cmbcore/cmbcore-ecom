@@ -1,0 +1,45 @@
+{
+  "name": "Giao diện",
+  "name_key": "admin.modules.theme_manager.name",
+  "alias": "theme-manager",
+  "version": "1.0.0",
+  "description": "Quản lý theme, cấu hình dùng chung và menu storefront",
+  "description_key": "admin.modules.theme_manager.description",
+  "order": 50,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\ThemeManager\\Providers\\ThemeManagerServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Giao diện",
+        "translation_key": "admin.modules.theme_manager.menu",
+        "icon": "fa-solid fa-palette",
+        "route": "/admin/themes",
+        "permission": "themes.view",
+        "children": [
+          {
+            "label": "Danh sách theme",
+            "translation_key": "admin.modules.theme_manager.list",
+            "route": "/admin/themes",
+            "permission": "themes.view"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/themes": "modules/ThemeManager/Resources/js/pages/ThemeList.jsx",
+      "/admin/themes/:alias/settings": "modules/ThemeManager/Resources/js/pages/ThemeSettings.jsx",
+      "/admin/themes/:alias/preview": "modules/ThemeManager/Resources/js/pages/ThemePreview.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "theme.activated",
+      "theme.settings_updated"
+    ],
+    "listens": []
+  }
+}

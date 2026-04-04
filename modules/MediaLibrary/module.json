@@ -1,0 +1,28 @@
+{
+  "name": "Media Library",
+  "alias": "media_library",
+  "version": "1.0.0",
+  "description": "Thư viện media tập trung cho các module nội dung và sản phẩm.",
+  "order": 33,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\MediaLibrary\\Providers\\MediaLibraryServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Media Library",
+        "icon": "fa-solid fa-photo-film",
+        "route": "/admin/media-library"
+      }
+    ],
+    "pages": {
+      "/admin/media-library": "modules/MediaLibrary/Resources/js/pages/MediaLibraryPage.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

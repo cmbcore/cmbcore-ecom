@@ -1,0 +1,755 @@
+{
+  "name": "Cmbcore Theme Pack",
+  "alias": "cmbcore",
+  "version": "1.0.0",
+  "description": "Theme storefront đóng gói theo baseline Cmbcore với homepage, product, blog và static page đồng bộ.",
+  "author": "Dev Team",
+  "parent": "default",
+  "supports": ["products", "blog", "pages"],
+  "settings": [
+    {
+      "group": "colors",
+      "label": "Bảng màu",
+      "description": "Màu nền và màu nhấn được áp dụng đồng bộ cho toàn bộ storefront.",
+      "fields": [
+        {
+          "key": "primary_color",
+          "label": "Màu chính",
+          "type": "color",
+          "default": "#ed2524",
+          "span": 8
+        },
+        {
+          "key": "secondary_color",
+          "label": "Màu phụ",
+          "type": "color",
+          "default": "#fb4908",
+          "span": 8
+        },
+        {
+          "key": "surface_dark",
+          "label": "Nền tối",
+          "type": "color",
+          "default": "#000000",
+          "span": 8
+        }
+      ]
+    },
+    {
+      "group": "branding",
+      "label": "Thương hiệu",
+      "description": "Logo, liên hệ và các thành phần nhận diện dùng chung trên header và footer.",
+      "fields": [
+        {
+          "key": "logo_image",
+          "label": "Logo",
+          "type": "image",
+          "default": "/theme-assets/cmbcore/images/logo.png",
+          "span": 8
+        },
+        {
+          "key": "logo_alt",
+          "label": "Alt logo",
+          "type": "text",
+          "default": "RHYS MAN",
+          "span": 8
+        },
+        {
+          "key": "facebook_url",
+          "label": "Facebook URL",
+          "type": "text",
+          "default": "https://www.facebook.com/rhysman.vn",
+          "span": 8
+        },
+        {
+          "key": "footer_contact",
+          "label": "Thông tin footer",
+          "type": "object",
+          "fields": [
+            {
+              "key": "company",
+              "label": "Tên công ty",
+              "type": "text",
+              "default": "RHYS MAN",
+              "span": 12
+            },
+            {
+              "key": "address",
+              "label": "Địa chỉ",
+              "type": "textarea",
+              "rows": 3,
+              "default": "21-D4 Bạch Thái Bưởi, Phúc La, Hà Đông, Hà Nội",
+              "span": 24
+            },
+            {
+              "key": "phone",
+              "label": "Số điện thoại",
+              "type": "text",
+              "default": "0965696815",
+              "span": 8
+            },
+            {
+              "key": "email",
+              "label": "Email",
+              "type": "text",
+              "default": "cskh@rhysman.vn",
+              "span": 8
+            },
+            {
+              "key": "gov_badge_url",
+              "label": "Link Bộ Công Thương",
+              "type": "text",
+              "default": "http://online.gov.vn/Home/WebDetails/111501",
+              "span": 8
+            },
+            {
+              "key": "gov_badge_image",
+              "label": "Ảnh Bộ Công Thương",
+              "type": "image",
+              "default": "/theme-assets/cmbcore/demo/footer-badge.webp",
+              "span": 12
+            },
+            {
+              "key": "gov_badge_alt",
+              "label": "Alt ảnh badge",
+              "type": "text",
+              "default": "Đã thông báo BCT",
+              "span": 12
+            }
+          ],
+          "default": {
+            "company": "RHYS MAN",
+            "address": "21-D4 Bạch Thái Bưởi, Phúc La, Hà Đông, Hà Nội",
+            "phone": "0965696815",
+            "email": "cskh@rhysman.vn",
+            "gov_badge_image": "/theme-assets/cmbcore/demo/footer-badge.webp",
+            "gov_badge_url": "http://online.gov.vn/Home/WebDetails/111501",
+            "gov_badge_alt": "Đã thông báo BCT"
+          }
+        }
+      ]
+    },
+    {
+      "group": "layout",
+      "label": "Bố cục",
+      "description": "Số lượng item và mật độ hiển thị trên homepage, blog và catalog.",
+      "fields": [
+        {
+          "key": "products_per_page",
+          "label": "Sản phẩm mỗi trang",
+          "type": "number",
+          "default": 12,
+          "min": 4,
+          "max": 48,
+          "span": 6
+        },
+        {
+          "key": "blog_posts_per_page",
+          "label": "Bài viết mỗi trang",
+          "type": "number",
+          "default": 6,
+          "min": 3,
+          "max": 24,
+          "span": 6
+        },
+        {
+          "key": "home_products_per_section",
+          "label": "Sản phẩm mỗi block trang chủ",
+          "type": "number",
+          "default": 8,
+          "min": 4,
+          "max": 12,
+          "span": 6
+        },
+        {
+          "key": "home_posts_per_section",
+          "label": "Bài viết mỗi block trang chủ",
+          "type": "number",
+          "default": 4,
+          "min": 3,
+          "max": 8,
+          "span": 6
+        }
+      ]
+    },
+    {
+      "group": "copy",
+      "label": "Nội dung dùng chung",
+      "description": "Các nhãn và CTA dùng chung cho header, footer, mobile toolbar và product detail.",
+      "fields": [
+        {
+          "key": "header_blog_label",
+          "label": "Nhãn nút Blog ở header",
+          "type": "text",
+          "default": "Tin tức",
+          "span": 8
+        },
+        {
+          "key": "header_about_label",
+          "label": "Nhãn nút Giới thiệu ở header",
+          "type": "text",
+          "default": "Giới thiệu",
+          "span": 8
+        },
+        {
+          "key": "social_title",
+          "label": "Tiêu đề social ở footer",
+          "type": "text",
+          "default": "Facebook",
+          "span": 8
+        },
+        {
+          "key": "social_label",
+          "label": "Nhãn nút social",
+          "type": "text",
+          "default": "Facebook",
+          "span": 8
+        },
+        {
+          "key": "home_best_sellers_title",
+          "label": "Tiêu đề best sellers trang chủ",
+          "type": "text",
+          "default": "Bán chạy nhất",
+          "span": 8
+        },
+        {
+          "key": "home_latest_products_title",
+          "label": "Tiêu đề sản phẩm mới trang chủ",
+          "type": "text",
+          "default": "Sản phẩm mới",
+          "span": 8
+        },
+        {
+          "key": "home_feedback_title",
+          "label": "Tiêu đề đánh giá trang chủ",
+          "type": "text",
+          "default": "Đánh giá từ khách hàng",
+          "span": 8
+        },
+        {
+          "key": "home_procedure_title",
+          "label": "Tiêu đề quy trình trang chủ",
+          "type": "text",
+          "default": "Quy trình phát triển",
+          "span": 8
+        },
+        {
+          "key": "home_latest_posts_title",
+          "label": "Tiêu đề bài viết mới trang chủ",
+          "type": "text",
+          "default": "Tin tức mới nhất",
+          "span": 8
+        },
+        {
+          "key": "products_eyebrow",
+          "label": "Eyebrow trang danh sách sản phẩm",
+          "type": "text",
+          "default": "Product catalog",
+          "span": 8
+        },
+        {
+          "key": "products_list_title",
+          "label": "Tiêu đề trang danh sách sản phẩm",
+          "type": "text",
+          "default": "Tất cả sản phẩm",
+          "span": 8
+        },
+        {
+          "key": "products_list_description",
+          "label": "Mô tả trang danh sách sản phẩm",
+          "type": "textarea",
+          "rows": 3,
+          "default": "Kho sản phẩm được chia theo nhu cầu chăm sóc, dễ xem nhanh, lọc nhanh và chốt mua nhanh.",
+          "span": 16
+        },
+        {
+          "key": "blog_eyebrow",
+          "label": "Eyebrow trang blog",
+          "type": "text",
+          "default": "Editorial",
+          "span": 8
+        },
+        {
+          "key": "blog_list_title",
+          "label": "Tiêu đề trang blog",
+          "type": "text",
+          "default": "Tin tức",
+          "span": 8
+        },
+        {
+          "key": "blog_list_description",
+          "label": "Mô tả trang blog",
+          "type": "textarea",
+          "rows": 3,
+          "default": "Nội dung tư vấn chăm sóc, grooming và cách chọn quà tặng cho nam theo từng tình huống.",
+          "span": 16
+        },
+        {
+          "key": "product_promo_title",
+          "label": "Tiêu đề promo trang sản phẩm",
+          "type": "text",
+          "default": "Ưu đãi và đóng gói",
+          "span": 8
+        },
+        {
+          "key": "product_promo_copy",
+          "label": "Nội dung promo trang sản phẩm",
+          "type": "textarea",
+          "rows": 3,
+          "default": "Sản phẩm được đóng gói theo tinh thần quà tặng premium, dễ chọn và dễ chốt đơn nhanh.",
+          "span": 16
+        },
+        {
+          "key": "mobile_toolbar_items",
+          "label": "Mobile toolbar",
+          "type": "repeater",
+          "fields": [
+            { "key": "label", "label": "Nhãn", "type": "text", "default": "", "span": 6 },
+            { "key": "url", "label": "Liên kết", "type": "text", "default": "", "span": 8 },
+            { "key": "icon", "label": "Font icon", "type": "text", "default": "fa-solid fa-house", "span": 6 },
+            {
+              "key": "target",
+              "label": "Kiểu mở",
+              "type": "select",
+              "default": "_self",
+              "span": 4,
+              "options": [
+                { "label": "Cùng tab", "value": "_self" },
+                { "label": "Tab mới", "value": "_blank" }
+              ]
+            }
+          ],
+          "default": [
+            { "label": "Trang chủ", "url": "/", "icon": "fa-solid fa-house", "target": "_self" },
+            { "label": "Sản phẩm", "url": "/san-pham", "icon": "fa-solid fa-bag-shopping", "target": "_self" },
+            { "label": "Tin tức", "url": "/category/tin-tuc/", "icon": "fa-regular fa-newspaper", "target": "_self" },
+            { "label": "Facebook", "url": "https://www.facebook.com/rhysman.vn", "icon": "fa-brands fa-facebook-f", "target": "_blank" }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "home",
+      "label": "Trang chủ",
+      "description": "Quản lý hero, banner, quote, testimonial, quy trình và block CTA cuối trang.",
+      "fields": [
+        {
+          "key": "home_category_slugs",
+          "label": "Slug danh mục nổi bật",
+          "type": "tags",
+          "default": ["bo-qua-tang-cho-nam", "cham-soc-co-the", "san-pham-khu-mui", "cham-soc-toc"]
+        },
+        {
+          "key": "home_hero_slides",
+          "label": "Hero slides",
+          "type": "repeater",
+          "fields": [
+            {
+              "key": "desktop",
+              "label": "Ảnh desktop",
+              "type": "image",
+              "default": null,
+              "span": 12
+            },
+            {
+              "key": "mobile",
+              "label": "Ảnh mobile",
+              "type": "image",
+              "default": null,
+              "span": 12
+            },
+            {
+              "key": "alt",
+              "label": "Alt ảnh",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "eyebrow",
+              "label": "Eyebrow",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "title",
+              "label": "Tiêu đề",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "body",
+              "label": "Mô tả ngắn",
+              "type": "textarea",
+              "rows": 4,
+              "default": "",
+              "span": 24
+            },
+            {
+              "key": "link_url",
+              "label": "Link banner",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "link_target",
+              "label": "Kiểu mở link",
+              "type": "select",
+              "default": "_self",
+              "span": 4,
+              "options": [
+                { "label": "Cùng tab", "value": "_self" },
+                { "label": "Tab mới", "value": "_blank" }
+              ]
+            },
+            {
+              "key": "primary_label",
+              "label": "Nút chính",
+              "type": "text",
+              "default": "",
+              "span": 6
+            },
+            {
+              "key": "primary_url",
+              "label": "Link nút chính",
+              "type": "text",
+              "default": "",
+              "span": 6
+            },
+            {
+              "key": "secondary_label",
+              "label": "Nút phụ",
+              "type": "text",
+              "default": "",
+              "span": 6
+            },
+            {
+              "key": "secondary_url",
+              "label": "Link nút phụ",
+              "type": "text",
+              "default": "",
+              "span": 6
+            }
+          ],
+          "default": [
+            {
+              "desktop": "/theme-assets/cmbcore/demo/hero-slide-1-desktop.png",
+              "mobile": "/theme-assets/cmbcore/demo/hero-slide-1-mobile.webp",
+              "alt": "Lock in Love",
+              "eyebrow": "Chuyển mình bứt phá",
+              "title": "Chăm sóc đàn ông thế hệ mới",
+              "body": "Homepage được đóng gói theo baseline Cmbcore: nền đen, typographic đậm và những block nội dung rất gọn, rất rõ.",
+              "link_url": "/danh-muc-san-pham/bo-qua-tang-cho-nam/",
+              "link_target": "_self",
+              "primary_label": "Khám phá bộ quà tặng",
+              "primary_url": "/danh-muc-san-pham/bo-qua-tang-cho-nam/",
+              "secondary_label": "Đọc tin tức grooming",
+              "secondary_url": "/category/tin-tuc/"
+            },
+            {
+              "desktop": "/theme-assets/cmbcore/demo/hero-slide-2-desktop.webp",
+              "mobile": "/theme-assets/cmbcore/demo/hero-slide-2-mobile.webp",
+              "alt": "Box Thương",
+              "eyebrow": "Gift box curated",
+              "title": "Chốt quà tặng nhanh, mở hộp đã thấy premium",
+              "body": "Danh mục, product card và product detail được canh theo hướng đóng gói sẵn để người mua quét nhanh và ra quyết định nhanh.",
+              "link_url": "/san-pham/combo-nam-tinh/",
+              "link_target": "_self",
+              "primary_label": "Xem combo Nam Tính",
+              "primary_url": "/san-pham/combo-nam-tinh/",
+              "secondary_label": "Xem giới thiệu",
+              "secondary_url": "/gioi-thieu/"
+            }
+          ]
+        },
+        {
+          "key": "home_quote_cards",
+          "label": "Quote cards",
+          "type": "repeater",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Tiêu đề",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "link_label",
+              "label": "Nhãn nút",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "url",
+              "label": "Liên kết",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "quote",
+              "label": "Nội dung",
+              "type": "textarea",
+              "rows": 4,
+              "default": "",
+              "span": 16
+            },
+            {
+              "key": "image",
+              "label": "Ảnh thẻ",
+              "type": "image",
+              "default": null,
+              "span": 8
+            }
+          ],
+          "default": [
+            {
+              "title": "Rhys Man chọn quà đúng vibe",
+              "quote": "Các combo được dựng như một món quà hoàn chỉnh: dễ chọn, dễ tặng và nhìn đủ premium ngay từ hộp đầu tiên.",
+              "link_label": "Xem bộ quà tặng",
+              "url": "/danh-muc-san-pham/bo-qua-tang-cho-nam/",
+              "image": "/theme-assets/cmbcore/demo/quote-card-1.png"
+            },
+            {
+              "title": "Style nam gọn nhưng không đơn điệu",
+              "quote": "Mỗi section trên homepage đẩy đúng một nhóm nhu cầu: quà tặng, chăm sóc cơ thể, khử mùi và tóc.",
+              "link_label": "Khám phá chăm sóc cơ thể",
+              "url": "/danh-muc-san-pham/cham-soc-co-the/",
+              "image": "/theme-assets/cmbcore/demo/quote-card-2.jpg"
+            },
+            {
+              "title": "Visual mạnh, nhịp đọc gọn",
+              "quote": "Giao diện bám cảm giác thương hiệu theme Cmbcore: nền đen, đỏ nổi, typography đậm và khối nội dung rất chắc tay.",
+              "link_label": "Đọc tin tức mới",
+              "url": "/category/tin-tuc/",
+              "image": "/theme-assets/cmbcore/demo/quote-card-3.jpg"
+            }
+          ]
+        },
+        {
+          "key": "home_testimonials",
+          "label": "Đánh giá khách hàng",
+          "type": "repeater",
+          "fields": [
+            {
+              "key": "name",
+              "label": "Tên khách",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "rating",
+              "label": "Số sao",
+              "type": "number",
+              "default": 5,
+              "min": 0,
+              "max": 5,
+              "span": 4
+            },
+            {
+              "key": "text",
+              "label": "Nhận xét",
+              "type": "textarea",
+              "rows": 4,
+              "default": "",
+              "span": 12
+            }
+          ],
+          "default": [
+            {
+              "name": "Khanh Linh",
+              "rating": 5,
+              "text": "Mua combo làm quà mà từ hộp, túi đến mùi hương đều gọn gàng. Cảm giác rất chỉn chu."
+            },
+            {
+              "name": "Minh Quan",
+              "rating": 5,
+              "text": "Dễ chọn sản phẩm hơn hẳn vì category rõ ràng, card gọn và giá thể hiện rất nhanh."
+            },
+            {
+              "name": "Trang Anh",
+              "rating": 4.8,
+              "text": "Bài viết tư vấn dễ đọc, section mục lục nổi làm trải nghiệm đọc dài mượt hơn nhiều."
+            }
+          ]
+        },
+        {
+          "key": "home_procedure_steps",
+          "label": "Quy trình",
+          "type": "repeater",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Tiêu đề",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "text",
+              "label": "Mô tả",
+              "type": "textarea",
+              "rows": 4,
+              "default": "",
+              "span": 16
+            }
+          ],
+          "default": [
+            {
+              "title": "Ý tưởng sản phẩm",
+              "text": "Thiết kế combo và routine dựa trên nhu cầu chăm sóc nam giới thế hệ mới."
+            },
+            {
+              "title": "Chọn nguyên liệu",
+              "text": "Ưu tiên cảm giác dùng tốt, mùi hương rõ và bao bì đủ chắc để lên quà tặng."
+            },
+            {
+              "title": "Hoàn thiện đóng gói",
+              "text": "Bộ sản phẩm được đóng thành set rõ ràng, nhìn premium ngay khi mở hộp."
+            },
+            {
+              "title": "Giao đến tay khách",
+              "text": "Storefront tối ưu để người mua chốt nhanh theo từng danh mục nhu cầu cụ thể."
+            }
+          ]
+        },
+        {
+          "key": "home_register_panel",
+          "label": "Block CTA cuối trang",
+          "type": "object",
+          "fields": [
+            {
+              "key": "title",
+              "label": "Tiêu đề",
+              "type": "text",
+              "default": "",
+              "span": 8
+            },
+            {
+              "key": "primary_label",
+              "label": "Nút chính",
+              "type": "text",
+              "default": "",
+              "span": 4
+            },
+            {
+              "key": "primary_url",
+              "label": "Link nút chính",
+              "type": "text",
+              "default": "",
+              "span": 4
+            },
+            {
+              "key": "secondary_label",
+              "label": "Nút phụ",
+              "type": "text",
+              "default": "",
+              "span": 4
+            },
+            {
+              "key": "secondary_url",
+              "label": "Link nút phụ",
+              "type": "text",
+              "default": "",
+              "span": 4
+            },
+            {
+              "key": "body",
+              "label": "Mô tả",
+              "type": "textarea",
+              "rows": 4,
+              "default": "",
+              "span": 24
+            },
+            {
+              "key": "desktop_image",
+              "label": "Ảnh desktop",
+              "type": "image",
+              "default": "/theme-assets/cmbcore/demo/register-desktop.png",
+              "span": 12
+            },
+            {
+              "key": "mobile_image",
+              "label": "Ảnh mobile",
+              "type": "image",
+              "default": "/theme-assets/cmbcore/demo/register-mobile.webp",
+              "span": 12
+            },
+            {
+              "key": "bullet_points",
+              "label": "Điểm nổi bật",
+              "type": "tags",
+              "default": [
+                "Combo quà tặng cho nam được cập nhật theo mùa",
+                "Layout storefront đồng bộ với product blog page",
+                "Dữ liệu hiển thị lấy từ module và theme settings, không cắm cứng nội dung"
+              ],
+              "span": 24
+            }
+          ],
+          "default": {
+            "title": "[ĐẶC QUYỀN] Ưu đãi dành riêng cho Rhyser",
+            "body": "Đăng ký để nhận thông tin sản phẩm mới, quà tặng theo mùa và các combo được curate riêng cho từng dịp tặng quà.",
+            "desktop_image": "/theme-assets/cmbcore/demo/register-desktop.png",
+            "mobile_image": "/theme-assets/cmbcore/demo/register-mobile.webp",
+            "primary_label": "Khám phá bộ quà tặng",
+            "primary_url": "/danh-muc-san-pham/bo-qua-tang-cho-nam/",
+            "secondary_label": "Đọc tin tức chăm sóc nam",
+            "secondary_url": "/category/tin-tuc/",
+            "bullet_points": [
+              "Combo quà tặng cho nam được cập nhật theo mùa",
+              "Layout storefront đồng bộ với product blog page",
+              "Dữ liệu hiển thị lấy từ module và theme settings, không cắm cứng nội dung"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "templates": {
+    "page": [
+      { "name": "default", "label": "Mặc định" }
+    ]
+  },
+  "menus": [
+    {
+      "alias": "main_menu",
+      "label": "Menu chính",
+      "description": "Menu điều hướng chính của header storefront.",
+      "items": [
+        { "label": { "vi": "Chăm sóc cơ thể", "en": "Body care" }, "url": "/danh-muc-san-pham/cham-soc-co-the/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Chăm sóc tóc", "en": "Hair care" }, "url": "/danh-muc-san-pham/cham-soc-toc/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Sản phẩm khử mùi", "en": "Deodorants" }, "url": "/danh-muc-san-pham/san-pham-khu-mui/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Bộ quà tặng cho nam", "en": "Gift sets" }, "url": "/danh-muc-san-pham/bo-qua-tang-cho-nam/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Tin tức", "en": "News" }, "url": "/category/tin-tuc/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Giới thiệu", "en": "About" }, "url": "/gioi-thieu/", "icon": null, "target": "_self" }
+      ]
+    },
+    {
+      "alias": "footer_about_menu",
+      "label": "Footer về Cmbcore",
+      "description": "Nhóm link giới thiệu thương hiệu ở footer.",
+      "items": [
+        { "label": { "vi": "Cửa hàng", "en": "Store" }, "url": "/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Giới thiệu", "en": "About" }, "url": "/gioi-thieu/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Tin tức", "en": "News" }, "url": "/category/tin-tuc/", "icon": null, "target": "_self" }
+      ]
+    },
+    {
+      "alias": "footer_policy_menu",
+      "label": "Footer chính sách",
+      "description": "Nhóm link chính sách ở footer.",
+      "items": [
+        { "label": { "vi": "Chính sách bảo mật", "en": "Privacy policy" }, "url": "/gioi-thieu/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Điều khoản sử dụng", "en": "Terms" }, "url": "/gioi-thieu/", "icon": null, "target": "_self" },
+        { "label": { "vi": "Chính sách giao hàng", "en": "Shipping policy" }, "url": "/gioi-thieu/", "icon": null, "target": "_self" }
+      ]
+    }
+  ]
+}

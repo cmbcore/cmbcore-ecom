@@ -1,0 +1,28 @@
+{
+  "name": "Form Liên Hệ",
+  "alias": "contact-form",
+  "version": "2.0.0",
+  "description": "Tạo và quản lý nhiều form liên hệ tùy chỉnh. Nhúng vào Page Builder với đầy đủ tùy chỉnh màu sắc và hiệu ứng.",
+  "author": "CMBCORE",
+  "requires": {
+    "core": ">=1.0.0"
+  },
+  "hooks": {
+    "listens": [
+      "page.block_definitions"
+    ]
+  },
+  "admin": {
+    "menu": [
+      {
+        "translation_key": "admin.plugins.contact_form.menu",
+        "icon": "fa-solid fa-envelope",
+        "route": "/admin/plugins/contact-form"
+      }
+    ],
+    "pages": {
+      "/admin/plugins/contact-form": "plugins/ContactForm/resources/js/pages/ContactForms.jsx",
+      "/admin/plugins/contact-form/:formId/submissions": "plugins/ContactForm/resources/js/pages/ContactSubmissions.jsx"
+    }
+  }
+}

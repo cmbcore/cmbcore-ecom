@@ -1,0 +1,74 @@
+{
+  "name": "Thông báo storefront",
+  "alias": "storefront-notice",
+  "version": "1.0.0",
+  "description": "Plugin mẫu thêm dải thông báo ở storefront và page admin riêng để verify plugin manager end-to-end.",
+  "author": "CMBCORE",
+  "requires": {
+    "core": ">=1.0.0",
+    "modules": ["product"]
+  },
+  "settings": [
+    {
+      "group": "notice",
+      "label": "Thông báo storefront",
+      "fields": [
+        {
+          "key": "headline",
+          "label": "Tiêu đề",
+          "type": "text",
+          "default": "Ưu đãi tuần này"
+        },
+        {
+          "key": "message",
+          "label": "Nội dung",
+          "type": "text",
+          "default": "Miễn phí giao hàng cho đơn từ 499.000đ trên toàn quốc."
+        },
+        {
+          "key": "icon",
+          "label": "Font icon",
+          "type": "text",
+          "default": "fa-solid fa-bolt"
+        },
+        {
+          "key": "tone",
+          "label": "Tông màu",
+          "type": "select",
+          "default": "accent",
+          "options": [
+            {
+              "value": "accent",
+              "label": "Nhấn mạnh"
+            },
+            {
+              "value": "neutral",
+              "label": "Trung tính"
+            }
+          ]
+        },
+        {
+          "key": "enabled",
+          "label": "Hiển thị trên storefront",
+          "type": "boolean",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "hooks": {
+    "listens": ["theme.head", "theme.footer", "product.created"]
+  },
+  "admin": {
+    "menu": [
+      {
+        "translation_key": "admin.plugins.storefront_notice.menu",
+        "icon": "fa-solid fa-bullhorn",
+        "route": "/admin/plugins/storefront-notice/overview"
+      }
+    ],
+    "pages": {
+      "/admin/plugins/storefront-notice/overview": "plugins/StorefrontNotice/resources/js/pages/StorefrontNoticeDashboard.jsx"
+    }
+  }
+}

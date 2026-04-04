@@ -1,0 +1,54 @@
+{
+  "name": "Sản phẩm",
+  "name_key": "admin.modules.product.name",
+  "alias": "product",
+  "version": "1.0.0",
+  "description": "Quản lý sản phẩm, SKU biến thể, media và SEO",
+  "description_key": "admin.modules.product.description",
+  "order": 20,
+  "enabled": true,
+  "dependencies": [
+    "category"
+  ],
+  "providers": [
+    "Modules\\Product\\Providers\\ProductServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Sản phẩm",
+        "translation_key": "admin.modules.product.menu",
+        "icon": "fa-solid fa-box-open",
+        "route": "/admin/products",
+        "permission": "products.view",
+        "children": [
+          {
+            "label": "Danh sách sản phẩm",
+            "translation_key": "admin.modules.product.list",
+            "route": "/admin/products",
+            "permission": "products.view"
+          },
+          {
+            "label": "Thêm sản phẩm",
+            "translation_key": "admin.modules.product.create",
+            "route": "/admin/products/create",
+            "permission": "products.create"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/products": "modules/Product/Resources/js/pages/ProductList.jsx",
+      "/admin/products/create": "modules/Product/Resources/js/pages/ProductCreate.jsx",
+      "/admin/products/:id/edit": "modules/Product/Resources/js/pages/ProductEdit.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "product.created",
+      "product.updated",
+      "product.deleted"
+    ],
+    "listens": []
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "Thanh toán",
+  "alias": "payment",
+  "version": "1.0.0",
+  "description": "Abstraction gateway thanh toán và lịch sử giao dịch.",
+  "order": 28,
+  "enabled": true,
+  "dependencies": [
+    "order"
+  ],
+  "providers": [
+    "Modules\\Payment\\Providers\\PaymentServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Giao dịch",
+        "icon": "fa-solid fa-wallet",
+        "route": "/admin/payments"
+      }
+    ],
+    "pages": {
+      "/admin/payments": "modules/Payment/Resources/js/pages/PaymentTransactions.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "payment.gateways"
+    ],
+    "listens": []
+  }
+}

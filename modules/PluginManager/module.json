@@ -1,0 +1,45 @@
+{
+  "name": "Plugin",
+  "name_key": "admin.modules.plugin_manager.name",
+  "alias": "plugin-manager",
+  "version": "1.0.0",
+  "description": "Quản lý plugin, trạng thái kích hoạt và cấu hình runtime",
+  "description_key": "admin.modules.plugin_manager.description",
+  "order": 55,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\PluginManager\\Providers\\PluginManagerServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Plugin",
+        "translation_key": "admin.modules.plugin_manager.menu",
+        "icon": "fa-solid fa-puzzle-piece",
+        "route": "/admin/plugins",
+        "permission": "plugins.view",
+        "children": [
+          {
+            "label": "Danh sách plugin",
+            "translation_key": "admin.modules.plugin_manager.list",
+            "route": "/admin/plugins",
+            "permission": "plugins.view"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/plugins": "modules/PluginManager/Resources/js/pages/PluginList.jsx",
+      "/admin/plugins/:alias/settings": "modules/PluginManager/Resources/js/pages/PluginSettings.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "plugin.enabled",
+      "plugin.disabled",
+      "plugin.settings_updated"
+    ],
+    "listens": []
+  }
+}

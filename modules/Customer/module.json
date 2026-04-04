@@ -1,0 +1,39 @@
+{
+  "name": "Khách hàng",
+  "name_key": "admin.modules.customer.name",
+  "alias": "customer",
+  "version": "1.0.0",
+  "description": "Quản lý tài khoản khách hàng, địa chỉ giao hàng và phiên mua sắm",
+  "description_key": "admin.modules.customer.description",
+  "order": 12,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\Customer\\Providers\\CustomerServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "translation_key": "admin.modules.customer.menu",
+        "icon": "fa-solid fa-users",
+        "route": "/admin/customers",
+        "children": [
+          {
+            "translation_key": "admin.modules.customer.list",
+            "route": "/admin/customers"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/customers": "modules/Customer/Resources/js/pages/CustomerList.jsx",
+      "/admin/customers/:id": "modules/Customer/Resources/js/pages/CustomerDetail.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "customer.registered"
+    ],
+    "listens": []
+  }
+}

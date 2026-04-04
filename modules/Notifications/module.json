@@ -1,0 +1,37 @@
+{
+  "name": "Thông báo",
+  "alias": "notifications",
+  "version": "1.0.0",
+  "description": "Template email và thông báo theo sự kiện đơn hàng, tài khoản.",
+  "order": 36,
+  "enabled": true,
+  "dependencies": [
+    "order",
+    "customer"
+  ],
+  "providers": [
+    "Modules\\Notifications\\Providers\\NotificationsServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Email Templates",
+        "icon": "fa-solid fa-envelope-open-text",
+        "route": "/admin/notifications"
+      }
+    ],
+    "pages": {
+      "/admin/notifications": "modules/Notifications/Resources/js/pages/NotificationTemplates.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": [
+      "customer.registered",
+      "order.created",
+      "order.confirmed",
+      "order.cancelled",
+      "order.delivered"
+    ]
+  }
+}

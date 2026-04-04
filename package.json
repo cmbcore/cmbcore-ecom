@@ -1,0 +1,34 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "eslint resources/js/admin modules plugins --ext .js,.jsx"
+    },
+    "dependencies": {
+        "@ant-design/icons": "^5.6.1",
+        "@fortawesome/fontawesome-free": "^7.2.0",
+        "@puckeditor/core": "^0.21.2",
+        "@tinymce/tinymce-react": "^5.1.1",
+        "antd": "^5.28.0",
+        "axios": "^1.8.4",
+        "chonky": "^2.3.2",
+        "chonky-icon-fontawesome": "^2.3.2",
+        "dayjs": "^1.11.13",
+        "react": "^18.3.1",
+        "react-beautiful-dnd": "^13.1.1",
+        "react-dom": "^18.3.1",
+        "react-router-dom": "^6.30.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.22.0",
+        "@vitejs/plugin-react": "^4.3.4",
+        "eslint": "^9.22.0",
+        "eslint-plugin-react": "^7.37.4",
+        "eslint-plugin-react-hooks": "^5.2.0",
+        "laravel-vite-plugin": "^1.0.0",
+        "sass": "^1.86.3",
+        "vite": "^5.0.0"
+    }
+}

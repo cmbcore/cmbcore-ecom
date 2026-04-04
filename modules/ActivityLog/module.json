@@ -1,0 +1,28 @@
+{
+  "name": "Activity Log",
+  "alias": "activity_log",
+  "version": "1.0.0",
+  "description": "Audit trail cho các thao tác quản trị trong admin.",
+  "order": 44,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\ActivityLog\\Providers\\ActivityLogServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Activity Log",
+        "icon": "fa-solid fa-clipboard-list",
+        "route": "/admin/activity-logs"
+      }
+    ],
+    "pages": {
+      "/admin/activity-logs": "modules/ActivityLog/Resources/js/pages/ActivityLogPage.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

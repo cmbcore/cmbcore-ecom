@@ -1,0 +1,46 @@
+{
+  "name": "Đơn hàng",
+  "name_key": "admin.modules.order.name",
+  "alias": "order",
+  "version": "1.0.0",
+  "description": "Quản lý đơn hàng COD, trạng thái xử lý và lịch sử",
+  "description_key": "admin.modules.order.description",
+  "order": 24,
+  "enabled": true,
+  "dependencies": [
+    "product",
+    "cart",
+    "customer"
+  ],
+  "providers": [
+    "Modules\\Order\\Providers\\OrderServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "translation_key": "admin.modules.order.menu",
+        "icon": "fa-solid fa-receipt",
+        "route": "/admin/orders",
+        "children": [
+          {
+            "translation_key": "admin.modules.order.list",
+            "route": "/admin/orders"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/orders": "modules/Order/Resources/js/pages/OrderList.jsx",
+      "/admin/orders/:id": "modules/Order/Resources/js/pages/OrderDetail.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "order.created",
+      "order.confirmed",
+      "order.cancelled",
+      "order.delivered"
+    ],
+    "listens": []
+  }
+}

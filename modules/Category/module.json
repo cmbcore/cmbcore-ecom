@@ -1,0 +1,52 @@
+{
+  "name": "Danh mục",
+  "name_key": "admin.modules.category.name",
+  "alias": "category",
+  "version": "1.0.0",
+  "description": "Quản lý danh mục sản phẩm",
+  "description_key": "admin.modules.category.description",
+  "order": 10,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\Category\\Providers\\CategoryServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Danh mục",
+        "translation_key": "admin.modules.category.menu",
+        "icon": "fa-solid fa-folder-tree",
+        "route": "/admin/categories",
+        "permission": "categories.view",
+        "children": [
+          {
+            "label": "Danh sách danh mục",
+            "translation_key": "admin.modules.category.list",
+            "route": "/admin/categories",
+            "permission": "categories.view"
+          },
+          {
+            "label": "Thêm danh mục",
+            "translation_key": "admin.modules.category.create",
+            "route": "/admin/categories/create",
+            "permission": "categories.create"
+          }
+        ]
+      }
+    ],
+    "pages": {
+      "/admin/categories": "modules/Category/Resources/js/pages/CategoryList.jsx",
+      "/admin/categories/create": "modules/Category/Resources/js/pages/CategoryCreate.jsx",
+      "/admin/categories/:id/edit": "modules/Category/Resources/js/pages/CategoryEdit.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "category.created",
+      "category.updated",
+      "category.deleted"
+    ],
+    "listens": []
+  }
+}

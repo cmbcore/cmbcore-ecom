@@ -1,0 +1,31 @@
+{
+  "name": "Khuyến mãi",
+  "alias": "coupon",
+  "version": "1.0.0",
+  "description": "Quản lý coupon và mã giảm giá cho giỏ hàng, checkout.",
+  "order": 27,
+  "enabled": true,
+  "dependencies": [
+    "order",
+    "customer"
+  ],
+  "providers": [
+    "Modules\\Coupon\\Providers\\CouponServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Coupon",
+        "icon": "fa-solid fa-ticket",
+        "route": "/admin/coupons"
+      }
+    ],
+    "pages": {
+      "/admin/coupons": "modules/Coupon/Resources/js/pages/CouponList.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

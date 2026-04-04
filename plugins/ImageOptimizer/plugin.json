@@ -1,0 +1,155 @@
+{
+  "name": "Tối ưu hình ảnh",
+  "alias": "image-optimizer",
+  "version": "1.0.0",
+  "description": "Tự động chuyển đổi ảnh sang WebP, nén chất lượng và chèn watermark chữ hoặc ảnh PNG trong suốt vào ảnh tải lên.",
+  "author": "CMBCore",
+  "requires": {
+    "core": ">=1.0.0",
+    "modules": []
+  },
+  "settings": [
+    {
+      "group": "conversion",
+      "label": "Chuyển đổi & nén",
+      "fields": [
+        {
+          "key": "enabled",
+          "label": "Kích hoạt tối ưu tự động",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "quality",
+          "label": "Chất lượng WebP (1–100)",
+          "type": "number",
+          "default": 82,
+          "min": 10,
+          "max": 100
+        },
+        {
+          "key": "max_width",
+          "label": "Chiều rộng tối đa (px, 0 = không giới hạn)",
+          "type": "number",
+          "default": 1920,
+          "min": 0
+        },
+        {
+          "key": "max_height",
+          "label": "Chiều cao tối đa (px, 0 = không giới hạn)",
+          "type": "number",
+          "default": 1920,
+          "min": 0
+        },
+        {
+          "key": "keep_original",
+          "label": "Giữ lại bản gốc song song",
+          "type": "boolean",
+          "default": false
+        }
+      ]
+    },
+    {
+      "group": "watermark",
+      "label": "Watermark",
+      "fields": [
+        {
+          "key": "wm_enabled",
+          "label": "Bật watermark",
+          "type": "boolean",
+          "default": false
+        },
+        {
+          "key": "wm_type",
+          "label": "Kiểu watermark",
+          "type": "select",
+          "default": "text",
+          "options": [
+            { "value": "text", "label": "Chữ" },
+            { "value": "image", "label": "Hình ảnh (PNG trong suốt)" }
+          ]
+        },
+        {
+          "key": "wm_text",
+          "label": "Nội dung chữ",
+          "type": "text",
+          "default": "© CMBCore"
+        },
+        {
+          "key": "wm_text_size",
+          "label": "Cỡ chữ (px)",
+          "type": "number",
+          "default": 24,
+          "min": 10,
+          "max": 120
+        },
+        {
+          "key": "wm_text_color",
+          "label": "Màu chữ (hex, mặc định trắng)",
+          "type": "text",
+          "default": "#ffffff"
+        },
+        {
+          "key": "wm_opacity",
+          "label": "Độ mờ watermark (0–100)",
+          "type": "number",
+          "default": 60,
+          "min": 0,
+          "max": 100
+        },
+        {
+          "key": "wm_image",
+          "label": "Ảnh watermark (PNG trong suốt)",
+          "type": "image"
+        },
+        {
+          "key": "wm_image_width",
+          "label": "Chiều rộng ảnh watermark (px)",
+          "type": "number",
+          "default": 200,
+          "min": 20,
+          "max": 800
+        },
+        {
+          "key": "wm_position",
+          "label": "Vị trí",
+          "type": "select",
+          "default": "bottom-right",
+          "options": [
+            { "value": "top-left",     "label": "Trên trái" },
+            { "value": "top-center",   "label": "Trên giữa" },
+            { "value": "top-right",    "label": "Trên phải" },
+            { "value": "center",       "label": "Chính giữa" },
+            { "value": "bottom-left",  "label": "Dưới trái" },
+            { "value": "bottom-center","label": "Dưới giữa" },
+            { "value": "bottom-right", "label": "Dưới phải" }
+          ]
+        },
+        {
+          "key": "wm_padding",
+          "label": "Cách mép (px)",
+          "type": "number",
+          "default": 16,
+          "min": 0,
+          "max": 200
+        }
+      ]
+    }
+  ],
+  "hooks": {
+    "listens": ["media.uploaded"]
+  },
+  "admin": {
+    "menu": [
+      {
+        "translation_key": "admin.plugins.image_optimizer.menu",
+        "icon": "image",
+        "route": "/admin/plugins/image-optimizer/dashboard"
+      }
+    ],
+    "pages": {
+      "/admin/plugins/image-optimizer/dashboard": "plugins/ImageOptimizer/resources/js/pages/ImageOptimizerDashboard.jsx"
+    },
+    "api_routes": "plugins/ImageOptimizer/src/routes/api.php"
+  }
+}

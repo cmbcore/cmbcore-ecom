@@ -1,0 +1,32 @@
+{
+  "name": "Báo cáo",
+  "alias": "reports",
+  "version": "1.0.0",
+  "description": "Báo cáo doanh thu, đơn hàng, top sản phẩm và top khách hàng.",
+  "order": 37,
+  "enabled": true,
+  "dependencies": [
+    "order",
+    "product",
+    "customer"
+  ],
+  "providers": [
+    "Modules\\Reports\\Providers\\ReportsServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Báo cáo",
+        "icon": "fa-solid fa-chart-line",
+        "route": "/admin/reports"
+      }
+    ],
+    "pages": {
+      "/admin/reports": "modules/Reports/Resources/js/pages/ReportsDashboard.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

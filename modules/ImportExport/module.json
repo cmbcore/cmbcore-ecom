@@ -1,0 +1,31 @@
+{
+  "name": "Import Export",
+  "alias": "import_export",
+  "version": "1.0.0",
+  "description": "Trích xuất và nhập sản phẩm bằng CSV.",
+  "order": 39,
+  "enabled": true,
+  "dependencies": [
+    "product",
+    "category"
+  ],
+  "providers": [
+    "Modules\\ImportExport\\Providers\\ImportExportServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Import Export",
+        "icon": "fa-solid fa-file-csv",
+        "route": "/admin/import-export"
+      }
+    ],
+    "pages": {
+      "/admin/import-export": "modules/ImportExport/Resources/js/pages/ImportExportPage.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

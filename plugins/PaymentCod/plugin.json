@@ -1,0 +1,51 @@
+{
+  "name": "Thanh toán COD",
+  "alias": "payment-cod",
+  "version": "1.0.0",
+  "description": "Gateway COD cho checkout và xác nhận thanh toán thủ công trong admin.",
+  "author": "CMBCORE",
+  "requires": {
+    "core": ">=1.0.0",
+    "modules": [
+      "payment",
+      "order"
+    ]
+  },
+  "settings": [
+    {
+      "group": "payment",
+      "label": "Thanh toán COD",
+      "fields": [
+        {
+          "key": "enabled",
+          "label": "Bật gateway COD",
+          "type": "boolean",
+          "default": true
+        },
+        {
+          "key": "instructions",
+          "label": "Hướng dẫn hiển thị",
+          "type": "text",
+          "default": "Thanh toán khi nhận hàng."
+        }
+      ]
+    }
+  ],
+  "hooks": {
+    "listens": [
+      "payment.gateways"
+    ]
+  },
+  "admin": {
+    "menu": [
+      {
+        "label": "COD Gateway",
+        "icon": "fa-solid fa-money-bill-wave",
+        "route": "/admin/plugins/payment-cod/overview"
+      }
+    ],
+    "pages": {
+      "/admin/plugins/payment-cod/overview": "plugins/PaymentCod/resources/js/pages/PaymentCodOverview.jsx"
+    }
+  }
+}

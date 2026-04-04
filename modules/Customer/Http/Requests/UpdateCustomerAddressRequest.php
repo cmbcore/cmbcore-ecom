@@ -1,0 +1,9 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Modules\Customer\Http\Requests;
+
+class UpdateCustomerAddressRequest extends StoreCustomerAddressRequest
+{
+}

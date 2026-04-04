@@ -1,0 +1,35 @@
+{
+  "name": "SEO Tools",
+  "alias": "seo_tools",
+  "version": "1.0.0",
+  "description": "Sitemap, robots và meta tags cho storefront.",
+  "order": 38,
+  "enabled": false,
+  "dependencies": [
+    "product",
+    "category",
+    "blog",
+    "page"
+  ],
+  "providers": [
+    "Modules\\SeoTools\\Providers\\SeoToolsServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "SEO Tools",
+        "icon": "fa-solid fa-globe",
+        "route": "/admin/seo-tools"
+      }
+    ],
+    "pages": {
+      "/admin/seo-tools": "modules/SeoTools/Resources/js/pages/SeoToolsPage.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [
+      "theme.head"
+    ],
+    "listens": []
+  }
+}

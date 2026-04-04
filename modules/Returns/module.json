@@ -1,0 +1,32 @@
+{
+  "name": "Đổi trả",
+  "alias": "returns",
+  "version": "1.0.0",
+  "description": "Yêu cầu đổi trả, phê duyệt và theo dõi hoàn tiền.",
+  "order": 40,
+  "enabled": true,
+  "dependencies": [
+    "order",
+    "payment",
+    "customer"
+  ],
+  "providers": [
+    "Modules\\Returns\\Providers\\ReturnsServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Đổi trả",
+        "icon": "fa-solid fa-rotate-left",
+        "route": "/admin/returns"
+      }
+    ],
+    "pages": {
+      "/admin/returns": "modules/Returns/Resources/js/pages/ReturnRequestList.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}

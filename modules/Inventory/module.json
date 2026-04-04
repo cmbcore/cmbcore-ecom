@@ -1,0 +1,34 @@
+{
+  "name": "Tồn kho",
+  "alias": "inventory",
+  "version": "1.0.0",
+  "description": "Theo dõi xuất nhập kho, cảnh báo low stock và đồng bộ với đơn hàng.",
+  "order": 30,
+  "enabled": true,
+  "dependencies": [
+    "product",
+    "order"
+  ],
+  "providers": [
+    "Modules\\Inventory\\Providers\\InventoryServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Tồn kho",
+        "icon": "fa-solid fa-boxes-stacked",
+        "route": "/admin/inventory"
+      }
+    ],
+    "pages": {
+      "/admin/inventory": "modules/Inventory/Resources/js/pages/InventoryDashboard.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": [
+      "order.confirmed",
+      "order.cancelled"
+    ]
+  }
+}

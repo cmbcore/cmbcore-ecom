@@ -1,0 +1,28 @@
+{
+  "name": "Banner",
+  "alias": "banner",
+  "version": "1.0.0",
+  "description": "Quản lý banner, slider và vị trí hiển thị storefront.",
+  "order": 35,
+  "enabled": true,
+  "dependencies": [],
+  "providers": [
+    "Modules\\Banner\\Providers\\BannerServiceProvider"
+  ],
+  "admin": {
+    "menu": [
+      {
+        "label": "Banner",
+        "icon": "fa-solid fa-panorama",
+        "route": "/admin/banners"
+      }
+    ],
+    "pages": {
+      "/admin/banners": "modules/Banner/Resources/js/pages/BannerList.jsx"
+    }
+  },
+  "hooks": {
+    "fires": [],
+    "listens": []
+  }
+}
