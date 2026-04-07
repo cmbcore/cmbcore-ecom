@@ -41,7 +41,14 @@ class NotificationsServiceProvider extends ServiceProvider
         });
 
         $hooks->register('order.created', function (Order $order) use ($service): void {
-            $service->send('order_created_customer', $order->guest_email ?: $order->user?->email, [
+            $email = $order->guest_email ?: $order->user?->email;
+
+            // Skip sending if no email is available (guest who didn't provide one)
+            if (! $email) {
+                return;
+            }
+
+            $service->send('order_created_customer', $email, [
                 'customer_name' => $order->customer_name,
                 'order_number' => $order->order_number,
                 'grand_total' => $order->grand_total,

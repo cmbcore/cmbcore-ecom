@@ -22,6 +22,15 @@ function resolveMenuLabel(label) {
     return '';
 }
 
+/**
+ * getValueProps for Ant Design Form.Item:
+ * Converts object labels to plain string before rendering the Input,
+ * preventing [object Object] being displayed on initial load.
+ */
+function labelValueProps(value) {
+    return { value: resolveMenuLabel(value) };
+}
+
 export default function ThemeMenuEditor({ menu, menuIndex }) {
     const { t } = useLocale();
 
@@ -66,6 +75,7 @@ export default function ThemeMenuEditor({ menu, menuIndex }) {
                                         label="Nhãn hiển thị"
                                         name={[field.name, 'label']}
                                         normalize={resolveMenuLabel}
+                                        getValueProps={labelValueProps}
                                         rules={[{ required: true, message: 'Vui lòng nhập nhãn menu.' }]}
                                     >
                                         <Input placeholder="VD: Trang chủ" />

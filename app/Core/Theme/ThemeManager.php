@@ -232,14 +232,22 @@ class ThemeManager
         );
         $storedMenus = $this->storedMenus($alias);
 
+        $finalSettings = array_replace(
+            $this->resolvedDefaultSettings($theme),
+            $storedSettings,
+        );
+
+        Log::info('[ThemeManager] configuration() returning', [
+            'alias'    => $alias,
+            'logo_alt' => $finalSettings['logo_alt'] ?? 'N/A',
+            'company'  => $finalSettings['footer_contact']['company'] ?? 'N/A',
+        ]);
+
         return [
-            'theme' => $this->themePayload($theme),
+            'theme'           => $this->themePayload($theme),
             'settings_schema' => $this->resolvedSettingsSchema($theme),
-            'settings' => array_replace(
-                $this->resolvedDefaultSettings($theme),
-                $storedSettings,
-            ),
-            'menus' => $this->menuDefinitions($theme, $storedMenus),
+            'settings'        => $finalSettings,
+            'menus'           => $this->menuDefinitions($theme, $storedMenus),
         ];
     }
 
@@ -262,6 +270,7 @@ class ThemeManager
 
         $this->syncInstalledThemes();
 
+        // Fresh query to avoid stale Eloquent model from syncInstalledThemes upsert
         $themeRecord = InstalledTheme::query()->where('alias', $alias)->first();
 
         if (! $themeRecord instanceof InstalledTheme) {
@@ -269,16 +278,32 @@ class ThemeManager
         }
 
         $currentSettings = is_array($themeRecord->settings) ? $themeRecord->settings : [];
+        $normalizedNew   = $this->normalizeThemeSettings($theme, $settings);
+        $normalizedMenus = $this->normalizeThemeMenus($theme, $menus);
 
-        $themeRecord->forceFill([
-            'settings' => array_replace(
-                Arr::except($currentSettings, ['menus']),
-                $this->normalizeThemeSettings($theme, $settings),
-                [
-                    'menus' => $this->normalizeThemeMenus($theme, $menus),
-                ],
-            ),
-        ])->save();
+        $merged = array_replace(
+            Arr::except($currentSettings, ['menus']),
+            $normalizedNew,
+            ['menus' => $normalizedMenus],
+        );
+
+        // Use raw DB update to bypass Eloquent cast re-encoding and avoid stale model issues
+        $rowCount = DB::table('installed_themes')
+            ->where('alias', $alias)
+            ->update([
+                'settings'   => json_encode($merged, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
+                'updated_at' => now(),
+            ]);
+
+        Log::info('[ThemeManager] updateConfiguration DB update', [
+            'alias'     => $alias,
+            'rowCount'  => $rowCount,
+            'logo_alt'  => $merged['logo_alt'] ?? 'N/A',
+            'company'   => $merged['footer_contact']['company'] ?? 'N/A',
+        ]);
+
+        // Reset sync flag so next configuration() call re-reads fresh data from DB
+        $this->themesSynced = false;
 
         return $this->configuration($alias);
     }
@@ -461,10 +486,13 @@ class ThemeManager
         })->all();
 
         if ($payloads !== []) {
+            // For NEW themes (first install): insert full payload including settings/defaults
+            // For EXISTING themes: only update name, version, updated_at
+            // settings are managed exclusively via updateConfiguration() — never overwrite here
             InstalledTheme::query()->upsert(
                 $payloads,
                 ['alias'],
-                ['name', 'version', 'settings', 'updated_at'],
+                ['name', 'version', 'updated_at'],
             );
         }
 
@@ -867,13 +895,21 @@ class ThemeManager
                     continue;
                 }
 
+                $rawLabel = $item['label'] ?? '';
                 $labels = [];
 
-                foreach ($supportedLocales as $locale) {
-                    $value = trim((string) data_get($item, "label.{$locale}", ''));
+                if (is_string($rawLabel) && trim($rawLabel) !== '') {
+                    // Frontend submitted a plain string (after user edited the input).
+                    // Store it under the primary locale so it round-trips cleanly.
+                    $primaryLocale = $supportedLocales[0] ?? app()->getLocale();
+                    $labels[$primaryLocale] = trim($rawLabel);
+                } elseif (is_array($rawLabel)) {
+                    foreach ($supportedLocales as $locale) {
+                        $value = trim((string) ($rawLabel[$locale] ?? ''));
 
-                    if ($value !== '') {
-                        $labels[$locale] = $value;
+                        if ($value !== '') {
+                            $labels[$locale] = $value;
+                        }
                     }
                 }
 

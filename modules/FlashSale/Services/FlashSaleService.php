@@ -181,31 +181,34 @@ class FlashSaleService
         ];
     }
 
-    public function assertItemQuantity(ProductSku $sku, int $quantity): void
+    public function assertItemQuantity(ProductSku $sku, int $quantity, bool $lockForUpdate = false): void
     {
-        // Lock the row to prevent race conditions between concurrent requests
-        $item = FlashSaleItem::query()
+        $query = FlashSaleItem::query()
             ->with('flashSale')
             ->where('product_sku_id', $sku->id)
             ->whereHas('flashSale', fn ($query) => $query
                 ->where('is_active', true)
                 ->where('starts_at', '<=', now())
-                ->where('ends_at', '>=', now()))
-            ->lockForUpdate()
-            ->first();
+                ->where('ends_at', '>=', now()));
+
+        if ($lockForUpdate) {
+            $query->lockForUpdate();
+        }
+
+        $item = $query->first();
 
         if (! $item instanceof FlashSaleItem || $item->quantity_limit === null) {
             return;
         }
 
         $remaining = max(0, (int) $item->quantity_limit - (int) $item->sold_quantity);
-        abort_if($quantity > $remaining, 422, 'So luong flash sale con lai khong du.');
+        abort_if($quantity > $remaining, 422, 'Số lượng flash sale còn lại không đủ.');
     }
 
     /**
      * @param  array<int, array<string, mixed>>  $items
      */
-    public function assertAvailability(array $items): void
+    public function assertAvailability(array $items, bool $lockForUpdate = false): void
     {
         foreach ($items as $item) {
             if (! isset($item['product_sku_id']) || ! is_numeric($item['product_sku_id'])) {
@@ -219,7 +222,7 @@ class FlashSaleService
                 continue;
             }
 
-            $this->assertItemQuantity($sku, max(1, (int) ($item['quantity'] ?? 1)));
+            $this->assertItemQuantity($sku, max(1, (int) ($item['quantity'] ?? 1)), $lockForUpdate);
         }
     }
 

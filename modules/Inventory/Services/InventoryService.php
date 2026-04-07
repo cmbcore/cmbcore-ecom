@@ -14,11 +14,13 @@ class InventoryService
 {
     /**
      * Check stock availability for all items in a single batch query (fixes N+1).
-     * Must be called inside a DB::transaction with lockForUpdate to prevent race conditions.
      *
      * @param  array<int, array<string, mixed>>  $items
+     * @param  bool  $lockForUpdate  Pass true only when already inside a DB::transaction
+     *                               (i.e. from placeOrder). Passing true outside a transaction
+     *                               will cause a DB error on most engines.
      */
-    public function assertAvailable(array $items): void
+    public function assertAvailable(array $items, bool $lockForUpdate = false): void
     {
         $skuIds = array_map(static fn ($item): int => (int) $item['product_sku_id'], $items);
         $quantityMap = [];
@@ -27,21 +29,22 @@ class InventoryService
             $quantityMap[(int) $item['product_sku_id']] = (int) $item['quantity'];
         }
 
-        // Batch load all SKUs + pessimistic lock to prevent race conditions (overselling)
-        $skus = ProductSku::query()
-            ->whereIn('id', $skuIds)
-            ->lockForUpdate()
-            ->get()
-            ->keyBy('id');
+        $query = ProductSku::query()->whereIn('id', $skuIds);
+
+        if ($lockForUpdate) {
+            $query->lockForUpdate();
+        }
+
+        $skus = $query->get()->keyBy('id');
 
         foreach ($quantityMap as $skuId => $quantity) {
             $sku = $skus->get($skuId);
 
             if (! $sku instanceof ProductSku) {
-                abort(422, 'Mot hoac nhieu SKU khong ton tai hoac khong hoat dong.');
+                abort(422, 'Một hoặc nhiều SKU không tồn tại hoặc không hoạt động.');
             }
 
-            abort_if($quantity > (int) $sku->stock_quantity, 422, 'Mot hoac nhieu SKU da vuot ton kho.');
+            abort_if($quantity > (int) $sku->stock_quantity, 422, 'Một hoặc nhiều sản phẩm đã vượt quá số lượng tồn kho.');
         }
     }
 
@@ -50,19 +53,37 @@ class InventoryService
         $order->loadMissing('items');
 
         DB::transaction(function () use ($order): void {
-            foreach ($order->items as $item) {
-                $alreadyMoved = StockMovement::query()
+            // Filter items that need deduction and haven't been processed
+            $pendingItems = $order->items->filter(static fn ($item): bool =>
+                $item->product_sku_id !== null &&
+                ! StockMovement::query()
                     ->where('order_id', $order->id)
                     ->where('sku_id', $item->product_sku_id)
                     ->where('type', StockMovement::TYPE_SALE)
-                    ->exists();
+                    ->exists()
+            );
 
-                if ($alreadyMoved || ! $item->product_sku_id) {
+            if ($pendingItems->isEmpty()) {
+                return;
+            }
+
+            // Batch load + pessimistic lock to prevent race conditions when
+            // multiple orders for the same SKU are confirmed concurrently.
+            $skuIds = $pendingItems->pluck('product_sku_id')->unique()->values()->all();
+            $skus = ProductSku::query()
+                ->whereIn('id', $skuIds)
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
+            foreach ($pendingItems as $item) {
+                /** @var ProductSku|null $sku */
+                $sku = $skus->get($item->product_sku_id);
+
+                if (! $sku instanceof ProductSku) {
                     continue;
                 }
 
-                /** @var ProductSku $sku */
-                $sku = ProductSku::query()->findOrFail($item->product_sku_id);
                 $sku->decrement('stock_quantity', (int) $item->quantity);
 
                 if ($item->product_id) {

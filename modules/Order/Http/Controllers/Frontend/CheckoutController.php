@@ -77,8 +77,13 @@ class CheckoutController extends Controller
             $payload['mode'] = 'buy_now';
         }
 
-        $order = $this->orderService->placeOrder($payload, $request->user());
-        session()->forget('checkout.buy_now');
+        try {
+            $order = $this->orderService->placeOrder($payload, $request->user());
+        } finally {
+            // Always clear the buy_now session — even on exception — so the user
+            // is not stuck in the buy_now flow after a failed placement attempt.
+            session()->forget('checkout.buy_now');
+        }
 
         return redirect()->route('storefront.orders.success', ['orderNumber' => $order->order_number])
             ->with('status', __('frontend.checkout.messages.order_created'));

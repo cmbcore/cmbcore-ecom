@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import HeaderBar from './Header';
 import Sidebar from './Sidebar';
+import AF from './AF';
 
 const { Content, Sider } = Layout;
 
@@ -19,6 +20,7 @@ export default function AdminLayout({ children }) {
                 <Content className="admin-shell__content">
                     <div className="admin-shell__panel">{children}</div>
                 </Content>
+                <AF />
             </Layout>
         </Layout>
     );

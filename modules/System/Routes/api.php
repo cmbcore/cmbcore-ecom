@@ -10,4 +10,5 @@ Route::prefix('api/admin/system')
     ->group(function (): void {
         Route::get('/settings', [SettingsController::class, 'show']);
         Route::put('/settings', [SettingsController::class, 'update']);
+        Route::post('/settings/test-email', [SettingsController::class, 'testEmail']);
     });

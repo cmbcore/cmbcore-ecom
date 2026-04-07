@@ -13,6 +13,8 @@ Route::prefix('api/admin/themes')
         Route::post('/install', [ThemeController::class, 'install']);
         Route::get('/{alias}/settings', [ThemeController::class, 'settings']);
         Route::put('/{alias}/settings', [ThemeController::class, 'updateSettings']);
+        Route::post('/{alias}/settings', [ThemeController::class, 'updateSettings']); // method override support
+
         Route::put('/{alias}/activate', [ThemeController::class, 'activate']);
         Route::delete('/{alias}', [ThemeController::class, 'destroy']);
         // Preview session

@@ -38,13 +38,18 @@ class OrderService
 
     public function previewCheckout(array $payload, ?User $user = null): array
     {
-        return $this->buildCheckoutPayload($payload, $user);
+        // forUpdate=false: no transaction here, lockForUpdate would cause a DB error.
+        // strictCoupon=false: invalid coupon returns non-applied state instead of aborting,
+        //                     so the checkout page still loads with an inline coupon error.
+        return $this->buildCheckoutPayload($payload, $user, forUpdate: false, strictCoupon: false);
     }
 
     public function placeOrder(array $payload, ?User $user = null): Order
     {
-        return DB::transaction(function () use ($payload, $user): Order {
-            $checkoutPayload = $this->buildCheckoutPayload($payload, $user);
+        $order = DB::transaction(function () use ($payload, $user): Order {
+            // forUpdate=true: inside a transaction — pessimistic locking is safe.
+            // strictCoupon=true: invalid coupon must abort the placement.
+            $checkoutPayload = $this->buildCheckoutPayload($payload, $user, forUpdate: true, strictCoupon: true);
             $shipping = $checkoutPayload['shipping'];
             $selectedShippingMethod = $checkoutPayload['selected_shipping_method'];
             $selectedPaymentMethod = $checkoutPayload['selected_payment_method'];
@@ -133,10 +138,16 @@ class OrderService
                 );
             }
 
-            $this->hookManager->fire('order.created', $order->load('items'));
-
             return $order->load(['items', 'histories', 'user', 'payments']);
         });
+
+        // Fire the order.created hook AFTER the transaction commits.
+        // If placed inside the transaction, a listener throwing an exception
+        // (e.g. sending email when guest_email is null) would roll back
+        // a successfully created order.
+        $this->hookManager->fire('order.created', $order->load('items'));
+
+        return $order;
     }
 
     public function listForCustomer(User $user, array $filters = []): LengthAwarePaginator
@@ -264,7 +275,13 @@ class OrderService
         return $order->refresh()->load(['items', 'histories.actor', 'user', 'payments']);
     }
 
-    private function buildCheckoutPayload(array $payload, ?User $user = null): array
+    /**
+     * @param  bool  $forUpdate   Whether to use pessimistic locking on inventory/flash-sale queries.
+     *                            Must be true only when already inside a DB::transaction.
+     * @param  bool  $strictCoupon  When false, coupon errors return a non-applied state instead
+     *                              of aborting — used during preview so the page still loads.
+     */
+    private function buildCheckoutPayload(array $payload, ?User $user = null, bool $forUpdate = false, bool $strictCoupon = true): array
     {
         $mode = ($payload['mode'] ?? 'cart') === 'buy_now' ? 'buy_now' : 'cart';
         $cartPayload = $mode === 'buy_now'
@@ -273,8 +290,8 @@ class OrderService
 
         abort_if(empty($cartPayload['items']), 422, __('frontend.checkout.messages.empty_cart'));
 
-        $this->inventoryService->assertAvailable($cartPayload['items']);
-        $this->flashSaleService->assertAvailability($cartPayload['items']);
+        $this->inventoryService->assertAvailable($cartPayload['items'], $forUpdate);
+        $this->flashSaleService->assertAvailability($cartPayload['items'], $forUpdate);
 
         $shipping = $this->resolveShipping($payload, $user);
         $shippingQuote = $this->shippingService->quote(
@@ -287,11 +304,12 @@ class OrderService
             (float) $cartPayload['subtotal'],
             $user,
             $user?->email ?? ($payload['guest_email'] ?? null),
+            $strictCoupon,
         );
         $taxableAmount = max(0, (float) $cartPayload['subtotal'] - (float) $couponQuote['discount_total']) + (float) $shippingQuote['shipping_total'];
         $taxQuote = $this->taxService->quote($shipping, $taxableAmount);
         $paymentMethods = $this->paymentService->availableMethods();
-        abort_if($paymentMethods === [], 422, 'Chua co gateway thanh toán nao duoc kich hoat.');
+        abort_if($paymentMethods === [], 422, 'Chưa có phương thức thanh toán nào được kích hoạt.');
 
         $selectedPaymentCode = trim((string) ($payload['payment_method'] ?? $paymentMethods[0]['code'] ?? ''));
         $selectedPaymentMethod = collect($paymentMethods)->firstWhere('code', $selectedPaymentCode) ?? $paymentMethods[0];
@@ -305,6 +323,7 @@ class OrderService
             'shipping_total' => (float) $shippingQuote['shipping_total'],
             'coupon_code' => $couponQuote['code'],
             'coupon' => $couponQuote['coupon'],
+            'coupon_error' => $couponQuote['error'] ?? null,
             'discount_total' => (float) $couponQuote['discount_total'],
             'tax_total' => (float) $taxQuote['tax_total'],
             'tax_rate' => $taxQuote['rate'],
@@ -339,12 +358,12 @@ class OrderService
         ])->filter()->implode(', ');
 
         return [
-            'recipient_name' => $payload['recipient_name'],
-            'phone' => $payload['shipping_phone'],
+            'recipient_name' => $payload['recipient_name'] ?? '',
+            'phone' => $payload['shipping_phone'] ?? '',
             'province' => $payload['province'] ?? null,
             'district' => $payload['district'] ?? null,
             'ward' => $payload['ward'] ?? null,
-            'address_line' => $payload['address_line'],
+            'address_line' => $payload['address_line'] ?? '',
             'address_note' => $payload['address_note'] ?? null,
             'full_address' => $fullAddress,
         ];

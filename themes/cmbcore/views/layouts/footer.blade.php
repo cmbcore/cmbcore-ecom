@@ -68,7 +68,7 @@
 
     <div class="cmbcore-footer__bottom">
         <div class="cmbcore-container">
-            <span>Website chính thức của Rhys Man</span>
+            <span>© 2006 <a href="https://cmbcore.com" target="_blank">CMB core</a>. All rights reserved.</span>
         </div>
     </div>
 </footer>

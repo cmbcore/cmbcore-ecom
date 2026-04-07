@@ -14,7 +14,7 @@ export default function HeaderBar() {
         <Header className="admin-header">
             <div>
                 <div className="admin-header__eyebrow">{t('layout.eyebrow')}</div>
-                <div className="admin-header__title">{t('layout.hello', { name: user?.name ?? t('layout.guest') })}</div>
+                <div className="admin-header__title" style={{ marginBottom: '25px' }}>{t('layout.hello', { name: user?.name ?? t('layout.guest') })}</div>
             </div>
             <div className="admin-header__actions">
                 <Tag color="geekblue">{t(`roles.${user?.role ?? 'guest'}`)}</Tag>

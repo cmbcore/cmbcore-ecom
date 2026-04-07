@@ -12,9 +12,16 @@
   "admin": {
     "menu": [
       {
-        "label": "Cài đặt",
+        "label": "Cài đặt & Hệ thống",
         "icon": "fa-solid fa-sliders",
-        "route": "/admin/settings"
+        "route": "/admin/settings-group",
+        "children": [
+          {
+            "label": "Cài đặt hệ thống",
+            "icon": "fa-solid fa-gears",
+            "route": "/admin/settings"
+          }
+        ]
       }
     ],
     "pages": {

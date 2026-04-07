@@ -303,13 +303,14 @@ export default function ThemeSettings() {
             const payload = buildThemeSettingsPayload(values);
             const formData = new FormData();
 
+            formData.append('_method', 'PUT');
             formData.append('settings', JSON.stringify(payload.settings));
             formData.append('menus', JSON.stringify(payload.menus));
             payload.uploads.forEach(({ token, file }) => {
                 formData.append(`uploads[${token}]`, file);
             });
 
-            const response = await api.put(`/themes/${alias}/settings`, formData, {
+            const response = await api.post(`/themes/${alias}/settings`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },

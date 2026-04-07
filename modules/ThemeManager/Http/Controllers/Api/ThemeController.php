@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ThemeSettingMediaService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class ThemeController extends Controller
@@ -65,6 +66,14 @@ class ThemeController extends Controller
 
         $menus = $this->decodeArrayInput($request->input('menus', []));
         $settings = $this->decodeArrayInput($request->input('settings', []));
+
+        Log::info('[ThemeController] updateSettings incoming', [
+            'alias'    => $alias,
+            'logo_alt' => $settings['logo_alt'] ?? 'KEY_MISSING',
+            'company'  => $settings['footer_contact']['company'] ?? 'KEY_MISSING',
+            'raw_settings_type' => gettype($request->input('settings')),
+            'raw_settings_len'  => strlen((string) $request->input('settings', '')),
+        ]);
 
         $payload = $request->validate([
             'uploads' => ['nullable', 'array'],

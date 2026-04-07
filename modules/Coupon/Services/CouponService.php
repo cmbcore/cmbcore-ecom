@@ -71,6 +71,7 @@ class CouponService
         float $subtotal,
         ?User $user = null,
         ?string $guestEmail = null,
+        bool $strict = true,
     ): array {
         $normalizedCode = strtoupper(trim((string) $code));
 
@@ -89,10 +90,22 @@ class CouponService
             ->first();
 
         if (! $coupon instanceof Coupon) {
-            abort(422, 'Coupon khong ton tai.');
+            if (! $strict) {
+                return ['applied' => false, 'code' => null, 'discount_total' => 0.0, 'coupon' => null, 'error' => 'Coupon không tồn tại.'];
+            }
+
+            abort(422, 'Coupon không tồn tại.');
         }
 
-        $this->assertCouponIsAvailable($coupon, $subtotal, $user, $guestEmail);
+        try {
+            $this->assertCouponIsAvailable($coupon, $subtotal, $user, $guestEmail);
+        } catch (\Symfony\Component\HttpKernel\Exception\HttpException $e) {
+            if (! $strict) {
+                return ['applied' => false, 'code' => null, 'discount_total' => 0.0, 'coupon' => null, 'error' => $e->getMessage()];
+            }
+
+            throw $e;
+        }
 
         $discount = $coupon->type === Coupon::TYPE_FIXED
             ? (float) $coupon->value
@@ -148,14 +161,14 @@ class CouponService
 
     private function assertCouponIsAvailable(Coupon $coupon, float $subtotal, ?User $user = null, ?string $guestEmail = null): void
     {
-        abort_unless($coupon->is_active, 422, 'Coupon hien dang tam dung.');
-        abort_if($coupon->start_date && Carbon::now()->lt($coupon->start_date), 422, 'Coupon chua den thoi gian su dung.');
-        abort_if($coupon->end_date && Carbon::now()->gt($coupon->end_date), 422, 'Coupon da het han.');
-        abort_if($coupon->min_order !== null && $subtotal < (float) $coupon->min_order, 422, 'Đơn hàng chua dat gia tri toi thieu de ap dung coupon.');
+        abort_unless($coupon->is_active, 422, 'Coupon hiện đang tạm dừng.');
+        abort_if($coupon->start_date && Carbon::now()->lt($coupon->start_date), 422, 'Coupon chưa đến thời gian sử dụng.');
+        abort_if($coupon->end_date && Carbon::now()->gt($coupon->end_date), 422, 'Coupon đã hết hạn.');
+        abort_if($coupon->min_order !== null && $subtotal < (float) $coupon->min_order, 422, 'Đơn hàng chưa đạt giá trị tối thiểu để áp dụng coupon.');
 
         if ($coupon->usage_limit !== null) {
             $usageCount = CouponUsage::query()->where('coupon_id', $coupon->id)->count();
-            abort_if($usageCount >= $coupon->usage_limit, 422, 'Coupon da het luot su dung.');
+            abort_if($usageCount >= $coupon->usage_limit, 422, 'Coupon đã hết lượt sử dụng.');
         }
 
         if ($coupon->per_user_limit !== null) {
@@ -169,7 +182,7 @@ class CouponService
                 return;
             }
 
-            abort_if($usageQuery->count() >= $coupon->per_user_limit, 422, 'Ban da dung het luot cho coupon nay.');
+            abort_if($usageQuery->count() >= $coupon->per_user_limit, 422, 'Bạn đã dùng hết lượt cho coupon này.');
         }
     }
 

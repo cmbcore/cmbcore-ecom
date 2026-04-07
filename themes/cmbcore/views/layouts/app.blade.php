@@ -2,6 +2,7 @@
 <html lang="{{ theme_locale() }}">
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', theme_context('page.meta_title', theme_context('page.title', theme_site_name())))</title>
     @if (theme_has_context('page.meta_description'))
@@ -25,6 +26,7 @@
     </style>
     <link rel="stylesheet" href="{{ theme_asset('css/theme.css') }}">
     @hook('theme.head')
+    @stack('head')
 </head>
 <body class="cmbcore-shell {{ request()->routeIs('storefront.home') ? 'is-home' : 'is-inner' }}">
 <div class="cmbcore-site">
@@ -36,6 +38,7 @@
     @include(theme_view('layouts.mobile-toolbar'))
 </div>
 <script src="{{ theme_asset('js/theme.js') }}" defer></script>
+@stack('scripts')
 @hook('theme.footer')
 </body>
 </html>
