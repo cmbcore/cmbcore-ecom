@@ -28,7 +28,10 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $request): JsonResponse
     {
-        $credentials = $request->safe()->only(['email', 'password']);
+        $credentials = array_merge(
+            $request->safe()->only(['email', 'password']),
+            ['is_active' => true],  // Chỉ cho phép tài khoản đang hoạt động
+        );
 
         // Auth::once → stateless, không tạo session
         if (! Auth::once($credentials)) {

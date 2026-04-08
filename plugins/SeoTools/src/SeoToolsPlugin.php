@@ -78,8 +78,36 @@ class SeoToolsPlugin implements PluginInterface
                 Route::get('/', function (): JsonResponse {
                     return response()->json([
                         'success' => true,
-                        'data' => app(SeoToolsService::class)->overview(),
+                        'data'    => app(SeoToolsService::class)->overview(),
                     ]);
+                });
+
+                // Save robots.txt content
+                Route::put('/robots', function (\Illuminate\Http\Request $request): JsonResponse {
+                    $content = (string) $request->input('content', '');
+                    app(SeoToolsService::class)->saveRobots($content);
+
+                    return response()->json(['success' => true, 'message' => 'Đã lưu robots.txt thành công.']);
+                });
+
+                // Get custom schema
+                Route::get('/schema', function (): JsonResponse {
+                    return response()->json([
+                        'success' => true,
+                        'data'    => ['schema_json' => app(SeoToolsService::class)->getCustomSchema()],
+                    ]);
+                });
+
+                // Save custom schema
+                Route::put('/schema', function (\Illuminate\Http\Request $request): JsonResponse {
+                    $json = (string) $request->input('schema_json', '');
+                    try {
+                        app(SeoToolsService::class)->saveCustomSchema($json);
+                    } catch (\JsonException $e) {
+                        return response()->json(['success' => false, 'message' => 'JSON không hợp lệ: ' . $e->getMessage()], 422);
+                    }
+
+                    return response()->json(['success' => true, 'message' => 'Đã lưu custom schema thành công.']);
                 });
             });
     }
@@ -180,6 +208,23 @@ class SeoToolsService
 
         $graph[] = $orgSchema;
 
+        // Inject custom schema defined in SEO settings
+        $customJson = $this->getCustomSchema();
+        if ($customJson !== '') {
+            try {
+                $customData = json_decode($customJson, true, 512, JSON_THROW_ON_ERROR);
+                if (isset($customData['@graph']) && is_array($customData['@graph'])) {
+                    foreach ($customData['@graph'] as $node) {
+                        $graph[] = $node;
+                    }
+                } elseif (is_array($customData) && $customData !== []) {
+                    $graph[] = $customData;
+                }
+            } catch (\JsonException) {
+                // Invalid JSON stored — skip silently
+            }
+        }
+
         if (! empty($graph)) {
             $output .= '<script type="application/ld+json">' . json_encode(
                 ['@context' => 'https://schema.org', '@graph' => $graph],
@@ -202,12 +247,43 @@ class SeoToolsService
         ];
     }
 
+    public function saveRobots(string $content): void
+    {
+        // Basic sanitisation: strip null bytes
+        $content = str_replace("\0", '', $content);
+        $this->settingService->set('seo', 'robots_content', $content);
+        $this->syncRobotsFile();
+    }
+
     public function syncRobotsFile(): void
     {
         file_put_contents(
             public_path('robots.txt'),
             (string) $this->settingService->get('seo', 'robots_content', "User-agent: *\nAllow: /\nSitemap: /sitemap.xml"),
         );
+    }
+
+    /**
+     * Get custom schema JSON string stored in settings.
+     */
+    public function getCustomSchema(): string
+    {
+        return (string) $this->settingService->get('seo', 'custom_schema_json', '');
+    }
+
+    /**
+     * Validate and save custom schema JSON.
+     *
+     * @throws \JsonException
+     */
+    public function saveCustomSchema(string $json): void
+    {
+        if (trim($json) !== '') {
+            // Validate JSON — throws JsonException on error
+            json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        $this->settingService->set('seo', 'custom_schema_json', trim($json));
     }
 
     /**

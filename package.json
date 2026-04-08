@@ -9,6 +9,7 @@
     "dependencies": {
         "@ant-design/icons": "^5.6.1",
         "@fortawesome/fontawesome-free": "^7.2.0",
+        "@lottiefiles/dotlottie-react": "^0.18.10",
         "@puckeditor/core": "^0.21.2",
         "@tinymce/tinymce-react": "^5.1.1",
         "antd": "^5.28.0",

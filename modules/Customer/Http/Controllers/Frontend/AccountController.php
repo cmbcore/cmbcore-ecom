@@ -50,7 +50,7 @@ class AccountController extends Controller
         $this->customerAuthService->login(
             (string) $payload['login'],
             (string) $payload['password'],
-            (bool) ($payload['remember'] ?? true),
+            true, // Luôn remember — session không hết hạn theo lifetime ngắn
         );
 
         return redirect()->intended(route('storefront.account.dashboard'))
