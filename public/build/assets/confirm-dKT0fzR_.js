@@ -1,0 +1,1 @@
+import{Q as a}from"./antd-Bt7LeaXv.js";const n="Xac nhan xoa?",e="Hanh dong nay khong the hoan tac.";function c(o,t={}){return{title:n,description:e,okText:"Xoa",cancelText:"Huy",okButtonProps:{danger:!0},onConfirm:o,...t}}function s({onConfirm:o,...t}){a.confirm({title:n,content:e,okText:"Xoa",cancelText:"Huy",okButtonProps:{danger:!0},onOk:o,...t})}export{c as d,s};
