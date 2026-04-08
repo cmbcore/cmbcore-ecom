@@ -58,15 +58,16 @@
                             {{ $product['category']['name'] }}
                         </a>
                     @endif
-                    <h1>{{ $product['name'] ?? '' }}</h1>
+                    <h1 class="cmbcore-product-summary__title">{{ $product['name'] ?? '' }}</h1>
 
                     <div class="cmbcore-product-summary__rating">
                         <span class="cmbcore-rating-value">{{ number_format($rating, 1) }}</span>
                         <span class="cmbcore-stars" aria-hidden="true">
                             <span style="width: {{ $ratingPercent }}%"></span>
                         </span>
-                        <span>({{ (int) ($product['review_count'] ?? 0) }} {{ theme_text('products.review_suffix') }})</span>
-                        <span class="cmbcore-product-summary__sold">{{ theme_text('products.sold_label', ['count' => $product['sold_count'] ?? 0]) }}</span>
+                        <span class="cmbcore-product-summary__review-count">({{ (int) ($product['review_count'] ?? 0) }} đánh giá)</span>
+                        <span class="cmbcore-product-summary__sep">|</span>
+                        <span class="cmbcore-product-summary__sold">Đã bán {{ is_numeric($product['sold_count'] ?? 0) && ($product['sold_count'] ?? 0) >= 1000 ? number_format(($product['sold_count'] ?? 0) / 1000, 1) . 'k' : ($product['sold_count'] ?? 0) }}</span>
                     </div>
 
                     <div class="cmbcore-product-summary__price" data-product-price>
@@ -143,15 +144,49 @@
                         @csrf
                         <input type="hidden" name="product_sku_id" value="{{ $defaultSku['id'] ?? '' }}" data-product-sku-input>
                         <input type="hidden" name="quantity" value="1" data-product-quantity-input>
-                        <button type="submit" class="cmbcore-button is-secondary">{{ theme_text('products.add_to_cart') }}</button>
-                        <button type="submit" formaction="{{ route('storefront.checkout.buy_now') }}" class="cmbcore-button is-primary">{{ theme_text('products.buy_now') }}</button>
+                        <button type="submit" class="cmbcore-button is-secondary cmbcore-button--uppercase">THÊM VÀO GIỎ HÀNG</button>
+                        <button type="submit" formaction="{{ route('storefront.checkout.buy_now') }}" class="cmbcore-button is-primary cmbcore-button--uppercase">MUA NGAY</button>
                     </form>
-                    @auth
-                        <form method="post" action="{{ route('storefront.wishlist.toggle', ['slug' => $product['slug']]) }}" style="margin-top: 12px;">
-                            @csrf
-                            <button type="submit" class="cmbcore-button is-secondary">Thêm vào wishlist</button>
-                        </form>
-                    @endauth
+
+                    {{-- Benefit icons grid (matches rhysman.vn) --}}
+                    <div class="cmbcore-product-benefits">
+                        <div class="cmbcore-product-benefit">
+                            <span class="cmbcore-product-benefit__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M1 3h1l3.6 7.59L3.25 13c-.16.28-.25.61-.25.96C3 15.1 3.9 16 5 16h14m-9 4a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm8 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM5.82 13H17l2-8H4.21"/></svg>
+            </span>
+                            <div>
+                                <strong>Giao hàng toàn quốc</strong>
+                                <span>Miễn phí từ 500k</span>
+                            </div>
+                        </div>
+                        <div class="cmbcore-product-benefit">
+                            <span class="cmbcore-product-benefit__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0 1 12 2.944a11.955 11.955 0 0 1-8.618 3.04A12.02 12.02 0 0 0 3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </span>
+                            <div>
+                                <strong>Cam kết chính hãng</strong>
+                                <span>100% hàng chính hãng</span>
+                            </div>
+                        </div>
+                        <div class="cmbcore-product-benefit">
+                            <span class="cmbcore-product-benefit__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </span>
+                            <div>
+                                <strong>Hỗ trợ 24/7</strong>
+                                <span>Tư vấn tận tình</span>
+                            </div>
+                        </div>
+                        <div class="cmbcore-product-benefit">
+                            <span class="cmbcore-product-benefit__icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </span>
+                            <div>
+                                <strong>Đổi trả dễ dàng</strong>
+                                <span>Trong vòng 7 ngày</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
