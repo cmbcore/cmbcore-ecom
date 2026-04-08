@@ -89,13 +89,7 @@
     gap: 0;
 }
 
-.cmbcore-menu__item>a {
-    min-height: 38px;
-    padding: 0 14px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-}
+/* Quy tắc này đã được hợp nhất vào block .cmbcore-menu__item>a bên dưới (line ~1248) */
 
 .cmbcore-hero {
     background: #fff;
@@ -1257,11 +1251,18 @@ ol {
 }
 
 .cmbcore-menu__item.has-submenu>a::after {
-    content: '\f107';
-    margin-left: 7px;
+    content: '\f107';             /* fa-chevron-down */
+    display: inline-block;        /* bắt buộc để FA pseudo-element render đúng */
+    margin-left: 6px;
     font-family: 'Font Awesome 6 Free';
     font-size: 10px;
-    font-weight: 900;
+    font-weight: 900;             /* solid variant */
+    font-style: normal;
+    font-variant: normal;
+    line-height: 1;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .cmbcore-menu__item:hover>a,
