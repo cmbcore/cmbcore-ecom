@@ -19,7 +19,7 @@ class SeoToolsService
 
     public function renderHeadPayload(): string
     {
-        $og = theme_context('seo.og', []);
+        $og     = theme_context('seo.og', []);
         $schema = theme_context('seo.schema');
         $output = '';
 
@@ -28,14 +28,57 @@ class SeoToolsService
                 if (! is_scalar($value) || trim((string) $value) === '') {
                     continue;
                 }
-
                 $output .= '<meta property="' . e((string) $property) . '" content="' . e((string) $value) . '">' . PHP_EOL;
             }
         }
 
+        $graph = [];
         if (is_array($schema) && $schema !== []) {
+            if (isset($schema['@graph']) && is_array($schema['@graph'])) {
+                $graph = $schema['@graph'];
+            } else {
+                $graph[] = $schema;
+            }
+        }
+
+        $siteName  = theme_site_name();
+        $homeUrl   = url('/');
+        $logoImage = theme_media_url((string) theme_setting('logo_image', ''), '');
+        $facebook  = (string) theme_setting('facebook_url', '');
+        $sameAs    = array_values(array_filter([$facebook]));
+
+        $graph[] = [
+            '@type'      => 'WebSite',
+            '@id'        => $homeUrl . '#website',
+            'name'       => $siteName,
+            'url'        => $homeUrl,
+            'inLanguage' => 'vi',
+            'potentialAction' => [
+                '@type'       => 'SearchAction',
+                'target'      => ['@type' => 'EntryPoint', 'urlTemplate' => url('/san-pham') . '?search={search_term_string}'],
+                'query-input' => 'required name=search_term_string',
+            ],
+        ];
+
+        $orgSchema = ['@type' => 'Organization', '@id' => $homeUrl . '#organization', 'name' => $siteName, 'url' => $homeUrl];
+        if ($logoImage !== '') {
+            $orgSchema['logo'] = ['@type' => 'ImageObject', 'url' => $logoImage];
+        }
+        if (! empty($sameAs)) {
+            $orgSchema['sameAs'] = $sameAs;
+        }
+        $contact = theme_setting_json('footer_contact', []);
+        if (! empty($contact['phone'])) {
+            $orgSchema['contactPoint'] = ['@type' => 'ContactPoint', 'telephone' => (string) $contact['phone'], 'contactType' => 'customer service'];
+        }
+        if (! empty($contact['address'])) {
+            $orgSchema['address'] = ['@type' => 'PostalAddress', 'streetAddress' => (string) $contact['address'], 'addressLocality' => 'Việt Nam'];
+        }
+        $graph[] = $orgSchema;
+
+        if (! empty($graph)) {
             $output .= '<script type="application/ld+json">' . json_encode(
-                $schema,
+                ['@context' => 'https://schema.org', '@graph' => $graph],
                 JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR,
             ) . '</script>' . PHP_EOL;
         }

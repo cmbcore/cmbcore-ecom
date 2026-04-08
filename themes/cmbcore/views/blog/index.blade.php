@@ -1,6 +1,16 @@
 @php
-    $blogTitle = (string) theme_setting('blog_list_title', theme_text('blog.list_title'));
+    $blogTitle       = (string) theme_setting('blog_list_title', theme_text('blog.list_title'));
     $blogDescription = (string) theme_setting('blog_list_description', theme_text('blog.list_description'));
+    $pageTitle       = (string) theme_context('page.title', $blogTitle);
+    $pageDescription = (string) theme_context('page.meta_description', $blogDescription);
+    $posts           = theme_context('posts', []);
+    $categories      = theme_context('categories', []);
+    $selectedCategory = theme_context('selected_category');
+    $recentPosts     = theme_context('recent_posts', []);
+    $currentPage     = (int) theme_context('pagination.current_page', 1);
+    $lastPage        = (int) theme_context('pagination.last_page', 1);
+    $prevUrl         = theme_context('pagination.prev_url');
+    $nextUrl         = theme_context('pagination.next_url');
 @endphp
 
 @extends(theme_layout('app'))
@@ -12,66 +22,94 @@
         <div class="cmbcore-container">
             @include(theme_view('partials.breadcrumbs'), ['items' => theme_context('breadcrumbs', [])])
 
-            <header class="cmbcore-archive-header">
-                <span class="cmbcore-kicker">{{ theme_setting('blog_eyebrow', theme_text('blog.eyebrow')) }}</span>
-                <h1>{{ theme_context('page.title', $blogTitle) }}</h1>
-                <p>{{ theme_context('page.meta_description', $blogDescription) }}</p>
+            {{-- Catalog header --}}
+            <header class="cmbcore-catalog-header cmbcore-catalog-header--blog">
+                <h1 class="cmbcore-catalog-header__title">{{ $pageTitle }}</h1>
             </header>
 
-            <div class="cmbcore-blog-layout">
-                <div>
-                    <form class="cmbcore-search cmbcore-search--catalog" action="{{ theme_route_url('storefront.blog.index') }}" method="get">
-                        <span class="cmbcore-search__icon">
-                            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                        </span>
-                        <input
-                            type="search"
-                            name="search"
-                            value="{{ theme_context('filters.search', '') }}"
-                            placeholder="{{ theme_text('blog.search_placeholder') }}"
-                        >
-                    </form>
-
-                    <div class="cmbcore-chip-group">
-                        <a class="cmbcore-chip {{ empty(theme_context('selected_category')) ? 'is-active' : '' }}" href="{{ theme_route_url('storefront.blog.index') }}">
-                            {{ theme_text('products.all_categories') }}
+            {{-- Category chips --}}
+            @if (!empty($categories))
+                <div class="cmbcore-cat-chips">
+                    <a class="cmbcore-cat-chip {{ empty($selectedCategory) ? 'is-active' : '' }}"
+                       href="{{ theme_route_url('storefront.blog.index') }}">Tất cả</a>
+                    @foreach ($categories as $category)
+                        <a class="cmbcore-cat-chip {{ ($selectedCategory['slug'] ?? null) === $category['slug'] ? 'is-active' : '' }}"
+                           href="{{ theme_route_url('storefront.blog.categories.show', ['slug' => $category['slug']]) }}">
+                            {{ $category['name'] }}
                         </a>
-                        @foreach (theme_context('categories', []) as $category)
-                            <a class="cmbcore-chip {{ theme_context('selected_category.slug') === $category['slug'] ? 'is-active' : '' }}" href="{{ theme_route_url('storefront.blog.categories.show', ['slug' => $category['slug']]) }}">
-                                {{ $category['name'] }}
-                            </a>
-                        @endforeach
-                    </div>
+                    @endforeach
+                </div>
+            @endif
 
-                    @if (theme_context('posts', []) === [])
+            <div class="cmbcore-blog-layout">
+                {{-- Main posts column --}}
+                <div class="cmbcore-blog-main">
+                    @if ($posts === [])
                         <div class="cmbcore-empty-state">
                             <h2>{{ theme_text('blog.empty_title') }}</h2>
                             <p>{{ theme_text('blog.empty_description') }}</p>
                         </div>
                     @else
-                        <div class="cmbcore-post-list">
-                            @foreach (theme_context('posts', []) as $post)
+                        <div class="cmbcore-blog-post-list">
+                            @foreach ($posts as $post)
                                 @include(theme_view('partials.post-card'), ['post' => $post, 'horizontal' => true])
                             @endforeach
                         </div>
                     @endif
 
-                    @if (theme_context('pagination.last_page', 1) > 1)
-                        <div class="cmbcore-pagination">
-                            @if (theme_context('pagination.prev_url'))
-                                <a class="cmbcore-button is-secondary" href="{{ theme_context('pagination.prev_url') }}">{{ theme_text('blog.pagination.previous') }}</a>
+                    {{-- Numbered pagination --}}
+                    @if ($lastPage > 1)
+                        <nav class="cmbcore-pagination-numbered" aria-label="Phân trang">
+                            @if ($prevUrl)
+                                <a class="cmbcore-page-btn" href="{{ $prevUrl }}" aria-label="Trang trước">
+                                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                                </a>
+                            @else
+                                <span class="cmbcore-page-btn is-disabled"><i class="fa-solid fa-chevron-left"></i></span>
                             @endif
-                            <span>{{ theme_text('blog.pagination.status', ['current' => theme_context('pagination.current_page', 1), 'last' => theme_context('pagination.last_page', 1)]) }}</span>
-                            @if (theme_context('pagination.next_url'))
-                                <a class="cmbcore-button is-secondary" href="{{ theme_context('pagination.next_url') }}">{{ theme_text('blog.pagination.next') }}</a>
+
+                            @php
+                                $range = 2;
+                                $pStart = max(1, $currentPage - $range);
+                                $pEnd   = min($lastPage, $currentPage + $range);
+                                $baseUrl = !empty($selectedCategory['slug'])
+                                    ? theme_route_url('storefront.blog.categories.show', ['slug' => $selectedCategory['slug']])
+                                    : theme_route_url('storefront.blog.index');
+                            @endphp
+
+                            @if ($pStart > 1)
+                                <a class="cmbcore-page-btn" href="{{ $baseUrl }}">1</a>
+                                @if ($pStart > 2)<span class="cmbcore-page-ellipsis">…</span>@endif
                             @endif
-                        </div>
+
+                            @for ($p = $pStart; $p <= $pEnd; $p++)
+                                @php $pUrl = $p === 1 ? $baseUrl : $baseUrl . '?page=' . $p; @endphp
+                                @if ($p === $currentPage)
+                                    <span class="cmbcore-page-btn is-current" aria-current="page">{{ $p }}</span>
+                                @else
+                                    <a class="cmbcore-page-btn" href="{{ $pUrl }}">{{ $p }}</a>
+                                @endif
+                            @endfor
+
+                            @if ($pEnd < $lastPage)
+                                @if ($pEnd < $lastPage - 1)<span class="cmbcore-page-ellipsis">…</span>@endif
+                                <a class="cmbcore-page-btn" href="{{ $baseUrl }}?page={{ $lastPage }}">{{ $lastPage }}</a>
+                            @endif
+
+                            @if ($nextUrl)
+                                <a class="cmbcore-page-btn" href="{{ $nextUrl }}" aria-label="Trang tiếp">
+                                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                                </a>
+                            @else
+                                <span class="cmbcore-page-btn is-disabled"><i class="fa-solid fa-chevron-right"></i></span>
+                            @endif
+                        </nav>
                     @endif
                 </div>
 
-                @include(theme_view('partials.blog-sidebar'), ['recentPosts' => theme_context('recent_posts', [])])
+                {{-- Sidebar --}}
+                @include(theme_view('partials.blog-sidebar'), ['recentPosts' => $recentPosts])
             </div>
         </div>
     </section>
 @endsection
-

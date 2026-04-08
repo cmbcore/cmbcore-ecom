@@ -31,6 +31,7 @@
             @include(theme_view('partials.breadcrumbs'), ['items' => theme_context('breadcrumbs', [])])
 
             <div class="cmbcore-product-detail">
+                {{-- Gallery --}}
                 <div class="cmbcore-gallery" data-cmbcore-gallery>
                     <div class="cmbcore-gallery__main">
                         @if ($primaryMedia)
@@ -45,13 +46,14 @@
                         <div class="cmbcore-gallery__thumbs">
                             @foreach ($media as $index => $item)
                                 <button class="cmbcore-gallery__thumb {{ $index === 0 ? 'is-active' : '' }}" type="button" data-gallery-thumb="{{ $item['url'] }}">
-                                    <img src="{{ $item['url'] }}" alt="{{ $item['alt_text'] ?: ($product['name'] ?? '') }}">
+                                    <img src="{{ $item['url'] }}" alt="{{ $item['alt_text'] ?: ($product['name'] ?? '') }}" loading="lazy">
                                 </button>
                             @endforeach
                         </div>
                     @endif
                 </div>
 
+                {{-- Summary --}}
                 <div class="cmbcore-product-summary" data-cmbcore-product data-product='@json($product)'>
                     @if (!empty($product['category']['name']))
                         <a class="cmbcore-product-summary__category" href="{{ theme_route_url('storefront.product-categories.show', ['slug' => $product['category']['slug']]) }}">
@@ -85,7 +87,6 @@
                     @if (!empty($flashSale))
                         <div
                             class="cmbcore-product-summary__promo"
-                            style="margin-top: 12px;"
                             data-test-title="Flash Sale"
                             data-flash-sale-countdown
                             data-flash-sale-ends-at="{{ $flashSale['ends_at'] }}"
@@ -148,12 +149,12 @@
                         <button type="submit" formaction="{{ route('storefront.checkout.buy_now') }}" class="cmbcore-button is-primary cmbcore-button--uppercase">MUA NGAY</button>
                     </form>
 
-                    {{-- Benefit icons grid (matches rhysman.vn) --}}
+                    {{-- Benefit icons grid --}}
                     <div class="cmbcore-product-benefits">
                         <div class="cmbcore-product-benefit">
                             <span class="cmbcore-product-benefit__icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M1 3h1l3.6 7.59L3.25 13c-.16.28-.25.61-.25.96C3 15.1 3.9 16 5 16h14m-9 4a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm8 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM5.82 13H17l2-8H4.21"/></svg>
-            </span>
+                            </span>
                             <div>
                                 <strong>Giao hàng toàn quốc</strong>
                                 <span>Miễn phí từ 500k</span>
@@ -162,7 +163,7 @@
                         <div class="cmbcore-product-benefit">
                             <span class="cmbcore-product-benefit__icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0 1 12 2.944a11.955 11.955 0 0 1-8.618 3.04A12.02 12.02 0 0 0 3 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-            </span>
+                            </span>
                             <div>
                                 <strong>Cam kết chính hãng</strong>
                                 <span>100% hàng chính hãng</span>
@@ -171,7 +172,7 @@
                         <div class="cmbcore-product-benefit">
                             <span class="cmbcore-product-benefit__icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            </span>
+                            </span>
                             <div>
                                 <strong>Hỗ trợ 24/7</strong>
                                 <span>Tư vấn tận tình</span>
@@ -180,7 +181,7 @@
                         <div class="cmbcore-product-benefit">
                             <span class="cmbcore-product-benefit__icon">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            </span>
+                            </span>
                             <div>
                                 <strong>Đổi trả dễ dàng</strong>
                                 <span>Trong vòng 7 ngày</span>
@@ -190,6 +191,7 @@
                 </div>
             </div>
 
+            {{-- Description --}}
             <section class="cmbcore-product-description">
                 <header class="cmbcore-product-description__header">
                     <span>{{ theme_text('products.procedure_kicker') }}</span>
@@ -200,60 +202,105 @@
                 </div>
             </section>
 
-            <section class="cmbcore-product-description">
+            {{-- Reviews --}}
+            <section class="cmbcore-product-description cmbcore-reviews-section">
                 <header class="cmbcore-product-description__header">
                     <span>Trải nghiệm mua hàng</span>
                     <h2>Đánh giá sản phẩm</h2>
                 </header>
 
-                @if ($reviews === [])
-                    <p>Sản phẩm chưa có đánh giá được duyệt.</p>
-                @else
-                    <div class="cmbcore-prose">
+                @if ($reviews !== [])
+                    {{-- Review summary bar --}}
+                    <div class="cmbcore-review-summary">
+                        <div class="cmbcore-review-summary__score">
+                            <span class="cmbcore-review-summary__avg">{{ number_format($rating, 1) }}</span>
+                            <div class="cmbcore-stars cmbcore-stars--lg" aria-label="{{ number_format($rating, 1) }} sao">
+                                <span style="width: {{ $ratingPercent }}%"></span>
+                            </div>
+                            <span class="cmbcore-review-summary__count">{{ (int) ($product['review_count'] ?? 0) }} đánh giá</span>
+                        </div>
+                    </div>
+
+                    <div class="cmbcore-review-list">
                         @foreach ($reviews as $review)
-                            <article style="margin-bottom: 24px;">
-                                <strong>{{ $review['title'] }}</strong>
-                                <div>{{ str_repeat('★', (int) $review['rating']) }}{{ str_repeat('☆', 5 - (int) $review['rating']) }}</div>
-                                <p>{{ $review['content'] }}</p>
-                                <small>{{ $review['author_name'] }} @if($review['is_verified_purchase']) · Đã mua hàng @endif</small>
+                            <article class="cmbcore-review-card">
+                                <div class="cmbcore-review-card__header">
+                                    <div class="cmbcore-review-card__avatar">
+                                        {{ mb_strtoupper(mb_substr($review['author_name'] ?? 'A', 0, 1)) }}
+                                    </div>
+                                    <div class="cmbcore-review-card__meta">
+                                        <strong class="cmbcore-review-card__author">{{ $review['author_name'] ?? 'Khách hàng' }}</strong>
+                                        <div class="cmbcore-review-card__stars">
+                                            @php $starRating = (int) ($review['rating'] ?? 5); @endphp
+                                            @for ($s = 1; $s <= 5; $s++)
+                                                <i class="fa-{{ $s <= $starRating ? 'solid' : 'regular' }} fa-star" aria-hidden="true"></i>
+                                            @endfor
+                                            @if (!empty($review['is_verified_purchase']))
+                                                <span class="cmbcore-review-card__verified">
+                                                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã mua hàng
+                                                </span>
+                                            @endif
+                                        </div>
+                                        @if (!empty($review['created_at']))
+                                            <time class="cmbcore-review-card__date" datetime="{{ $review['created_at'] }}">
+                                                {{ \Carbon\Carbon::parse($review['created_at'])->locale('vi')->isoFormat('DD/MM/YYYY') }}
+                                            </time>
+                                        @endif
+                                    </div>
+                                </div>
+                                @if (!empty($review['title']))
+                                    <p class="cmbcore-review-card__title">{{ $review['title'] }}</p>
+                                @endif
+                                <p class="cmbcore-review-card__content">{{ $review['content'] }}</p>
                                 @if (!empty($review['admin_reply']))
-                                    <div style="margin-top: 8px;"><strong>Phản hồi từ shop:</strong> {{ $review['admin_reply'] }}</div>
+                                    <div class="cmbcore-review-card__reply">
+                                        <strong>Phản hồi từ shop:</strong>
+                                        <p>{{ $review['admin_reply'] }}</p>
+                                    </div>
                                 @endif
                             </article>
                         @endforeach
                     </div>
+                @else
+                    <p class="cmbcore-reviews-empty">Sản phẩm chưa có đánh giá được duyệt.</p>
                 @endif
 
                 @auth
                     @if ($canReview)
-                        <form method="post" action="{{ route('storefront.products.reviews.store', ['slug' => $product['slug']]) }}" class="cmbcore-form-grid">
-                            @csrf
-                            <label>
-                                <span>Số sao</span>
-                                <select name="rating">
-                                    @for ($star = 5; $star >= 1; $star--)
-                                        <option value="{{ $star }}">{{ $star }} sao</option>
-                                    @endfor
-                                </select>
-                            </label>
-                            <label class="is-full">
-                                <span>Tiêu đề</span>
-                                <input type="text" name="title" required>
-                            </label>
-                            <label class="is-full">
-                                <span>Nội dung</span>
-                                <textarea name="content" rows="4" required></textarea>
-                            </label>
-                            <button type="submit" class="cmbcore-button is-primary">Gửi đánh giá</button>
-                        </form>
+                        <div class="cmbcore-review-form-wrap">
+                            <h3>Viết đánh giá của bạn</h3>
+                            <form method="post" action="{{ route('storefront.products.reviews.store', ['slug' => $product['slug']]) }}" class="cmbcore-form-grid">
+                                @csrf
+                                <label>
+                                    <span>Số sao</span>
+                                    <select name="rating">
+                                        @for ($star = 5; $star >= 1; $star--)
+                                            <option value="{{ $star }}">{{ $star }} sao</option>
+                                        @endfor
+                                    </select>
+                                </label>
+                                <label class="is-full">
+                                    <span>Tiêu đề</span>
+                                    <input type="text" name="title" required>
+                                </label>
+                                <label class="is-full">
+                                    <span>Nội dung</span>
+                                    <textarea name="content" rows="4" required></textarea>
+                                </label>
+                                <button type="submit" class="cmbcore-button is-primary">Gửi đánh giá</button>
+                            </form>
+                        </div>
                     @else
-                        <p>Bạn cần có đơn hàng đã xác nhận hoặc đã giao mới có thể đánh giá sản phẩm này.</p>
+                        <p class="cmbcore-reviews-notice">Bạn cần có đơn hàng đã xác nhận hoặc đã giao mới có thể đánh giá sản phẩm này.</p>
                     @endif
                 @else
-                    <p>Đăng nhập tài khoản đã mua sản phẩm để gửi đánh giá.</p>
+                    <p class="cmbcore-reviews-notice">
+                        <a href="{{ route('storefront.account.login') }}">Đăng nhập</a> tài khoản đã mua sản phẩm để gửi đánh giá.
+                    </p>
                 @endauth
             </section>
 
+            {{-- Related products --}}
             @if (!empty(theme_context('related_products', [])))
                 <section class="cmbcore-related-block">
                     <div class="cmbcore-section-title cmbcore-section-title--detail">
@@ -269,4 +316,3 @@
         </div>
     </section>
 @endsection
-

@@ -35,19 +35,74 @@ class PageController extends Controller
         }
 
         $pagePayload = array_replace((new PageResource($page))->resolve(), [
-            'content_html' => $contentHtml,
-            'excerpt_html' => $page->excerpt,
+            'content_html'  => $contentHtml,
+            'excerpt_html'  => $page->excerpt,
             'content_blocks' => $parsedContent['blocks'],
         ]);
 
+        $pageUrl    = url('/' . ltrim((string) $page->slug, '/'));
+        $pageTitle  = $page->title;
+        $metaTitle  = $page->meta_title ?: $pageTitle;
+        $metaDesc   = $page->meta_description ?: ($page->excerpt ?: theme_text('pages.detail_description'));
+        $imageUrl   = !empty($page->featured_image) ? theme_media_url($page->featured_image) : null;
+
+        $breadcrumbs = $this->catalogService->breadcrumbs($page);
+        $breadcrumbItems = [];
+        foreach ($breadcrumbs as $i => $crumb) {
+            $breadcrumbItems[] = [
+                '@type'    => 'ListItem',
+                'position' => $i + 1,
+                'name'     => $crumb['label'] ?? '',
+                'item'     => $crumb['url'] ?? $pageUrl,
+            ];
+        }
+        $breadcrumbItems[] = [
+            '@type'    => 'ListItem',
+            'position' => count($breadcrumbItems) + 1,
+            'name'     => $pageTitle,
+            'item'     => $pageUrl,
+        ];
+
+        $webPageSchema = [
+            '@type'       => 'WebPage',
+            '@id'         => $pageUrl,
+            'name'        => $pageTitle,
+            'description' => $metaDesc,
+            'url'         => $pageUrl,
+            'inLanguage'  => 'vi',
+        ];
+
+        if ($imageUrl) {
+            $webPageSchema['image'] = $imageUrl;
+        }
+
         return theme_manager()->view($this->catalogService->resolveTemplateView($page), [
             'page' => [
-                'title' => $page->title,
-                'meta_title' => $page->meta_title ?: $page->title,
-                'meta_description' => $page->meta_description ?: ($page->excerpt ?: theme_text('pages.detail_description')),
+                'title'            => $pageTitle,
+                'meta_title'       => $metaTitle,
+                'meta_description' => $metaDesc,
             ],
-            'breadcrumbs' => $this->catalogService->breadcrumbs($page),
+            'breadcrumbs'  => $breadcrumbs,
             'content_page' => $pagePayload,
+            'seo' => [
+                'og' => [
+                    'og:type'        => 'website',
+                    'og:title'       => $metaTitle,
+                    'og:description' => $metaDesc,
+                    'og:url'         => $pageUrl,
+                    'og:image'       => $imageUrl,
+                ],
+                'schema' => [
+                    '@context' => 'https://schema.org',
+                    '@graph'   => [
+                        $webPageSchema,
+                        [
+                            '@type'           => 'BreadcrumbList',
+                            'itemListElement' => $breadcrumbItems,
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 }

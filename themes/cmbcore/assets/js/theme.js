@@ -124,11 +124,29 @@
                 thumb.addEventListener('click', () => {
                     const nextUrl = thumb.getAttribute('data-gallery-thumb');
 
-                    if (!nextUrl) {
+                    if (!nextUrl || nextUrl === target.src) {
                         return;
                     }
 
-                    target.src = nextUrl;
+                    // Fade out
+                    target.classList.add('is-fading');
+
+                    // Preload then swap
+                    const preload = new Image();
+
+                    preload.onload = () => {
+                        target.src = nextUrl;
+                        target.classList.remove('is-fading');
+                    };
+
+                    preload.onerror = () => {
+                        target.src = nextUrl;
+                        target.classList.remove('is-fading');
+                    };
+
+                    preload.src = nextUrl;
+
+                    // Update active thumb
                     thumbs.forEach((item) => item.classList.remove('is-active'));
                     thumb.classList.add('is-active');
                 });
@@ -290,6 +308,77 @@
         });
     }
 
+    function initTocInline() {
+        document.querySelectorAll('[data-toc-inline]').forEach((tocEl) => {
+            const toggle = tocEl.querySelector('[data-toc-toggle]');
+            const list   = tocEl.querySelector('[data-toc-list]');
+            const links  = Array.from(tocEl.querySelectorAll('[data-toc-link]'));
+
+            // Toggle collapse / expand
+            if (toggle instanceof HTMLButtonElement) {
+                toggle.addEventListener('click', () => {
+                    const isCollapsed = tocEl.classList.toggle('is-collapsed');
+                    toggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+                });
+            }
+
+            // Smooth scroll on link click
+            links.forEach((link) => {
+                link.addEventListener('click', (event) => {
+                    const href = link.getAttribute('href');
+
+                    if (!href) { return; }
+
+                    const target = document.querySelector(href);
+
+                    if (!(target instanceof HTMLElement)) { return; }
+
+                    event.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+
+            // Scroll-spy: highlight active heading
+            if (links.length === 0) { return; }
+
+            const headingMap = new Map();
+
+            links.forEach((link) => {
+                const href = link.getAttribute('href');
+
+                if (!href) { return; }
+
+                const heading = document.querySelector(href);
+
+                if (heading instanceof HTMLElement) {
+                    headingMap.set(heading, link);
+                }
+            });
+
+            const headings = Array.from(headingMap.keys());
+
+            const onScroll = () => {
+                const scrollY = window.scrollY + 120; // offset for sticky header
+                let activeHeading = null;
+
+                for (const heading of headings) {
+                    if (heading.offsetTop <= scrollY) {
+                        activeHeading = heading;
+                    } else {
+                        break;
+                    }
+                }
+
+                headingMap.forEach((linkEl, headingEl) => {
+                    linkEl.classList.toggle('is-active', headingEl === activeHeading);
+                });
+            };
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+        });
+    }
+
     function initFlashSaleCountdown() {
         document.querySelectorAll('[data-flash-sale-countdown]').forEach((container) => {
             const endsAt = container.getAttribute('data-flash-sale-ends-at');
@@ -334,6 +423,7 @@
     initQuantity();
     initProductSwatches();
     initToc();
+    initTocInline();
     initFlashSaleCountdown();
 })();
 
