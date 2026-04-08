@@ -1,10 +1,13 @@
 /.phpunit.cache
 /node_modules
+/public/build
 /docs
 /public/hot
 /public/storage
 /storage/*.key
 /vendor
+# Ảnh demo được commit vào git để seed offline (không bị ignore)
+# database/seeders/demo-assets/ → KHÔNG liệt kê ở đây để git track
 .env
 .env.ci
 .env.backup

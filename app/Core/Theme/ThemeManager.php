@@ -22,22 +22,8 @@ use Throwable;
 
 class ThemeManager
 {
-    /** @var array<string, string> */
-    private const LEGACY_THEME_ALIASES = [
-        'rhysman' => 'cmbcore',
-    ];
-
-    /** @var array<string, string> */
-    private const LEGACY_THEME_ASSET_URLS = [
-        'https://rhysman.vn/wp-content/uploads/2026/01/BANNER-WEB-PC.png' => '/theme-assets/cmbcore/demo/hero-slide-1-desktop.png',
-        'https://rhysman.vn/wp-content/smush-webp/2026/01/BANNER-WEB-MOBIE.png.webp' => '/theme-assets/cmbcore/demo/hero-slide-1-mobile.webp',
-        'https://rhysman.vn/wp-content/smush-webp/2025/10/BANNER-WEB-Box-thuong.png.webp' => '/theme-assets/cmbcore/demo/hero-slide-2-desktop.webp',
-        'https://rhysman.vn/wp-content/smush-webp/2025/10/BANNER-WEB-Box-thuong-M.png.webp' => '/theme-assets/cmbcore/demo/hero-slide-2-mobile.webp',
-        'https://rhysman.vn/wp-content/uploads/2025/05/THUMB-NAM-TINH-1.png' => '/theme-assets/cmbcore/demo/quote-card-1.png',
-        'https://rhysman.vn/wp-content/uploads/2025/05/cham-soc-toan-dien_09312636a1b9429e9955e161c9429c4c.jpg' => '/theme-assets/cmbcore/demo/quote-card-2.jpg',
-        'https://rhysman.vn/wp-content/uploads/2025/05/cham-soc-toan-dien-cho-nam-gioi_7e4977521e4849eca099d725ce266a0d.jpg' => '/theme-assets/cmbcore/demo/quote-card-3.jpg',
-        'https://rhysman.vn/wp-content/smush-webp/2025/06/logo-bct.png.webp' => '/theme-assets/cmbcore/demo/footer-badge.webp',
-    ];
+    // Legacy migration constants đã được chuyển vào artisan command:
+    // php artisan theme:migrate-legacy
 
     private ?Collection $themes = null;
 
@@ -445,12 +431,6 @@ class ThemeManager
 
         $this->themesSynced = true;
 
-        $availableAliases = $this->getAll()
-            ->map(static fn (ThemeManifest $theme): string => $theme->getAlias())
-            ->all();
-
-        $this->migrateLegacyThemeAliases($availableAliases);
-
         $existingThemes = InstalledTheme::query()
             ->get()
             ->keyBy(static fn (InstalledTheme $theme): string => $theme->alias);
@@ -458,9 +438,7 @@ class ThemeManager
         $payloads = $this->getAll()->map(function (ThemeManifest $theme) use ($existingThemes): array {
             /** @var InstalledTheme|null $existingTheme */
             $existingTheme = $existingThemes->get($theme->getAlias());
-            $storedSettings = $this->migrateLegacySettingPaths(
-                is_array($existingTheme?->settings) ? $existingTheme->settings : [],
-            );
+            $storedSettings = is_array($existingTheme?->settings) ? $existingTheme->settings : [];
             $mergedSettings = array_replace(
                 $this->resolvedDefaultSettings($theme),
                 $this->normalizeThemeSettings($theme, Arr::except($storedSettings, ['menus'])),
@@ -531,64 +509,13 @@ class ThemeManager
         $activeAlias = DB::table('installed_themes')->where('is_active', true)->value('alias');
 
         return is_string($activeAlias) && $activeAlias !== ''
-            ? $this->normalizeStoredAlias($activeAlias)
+            ? $activeAlias
             : (string) config('themes.default', 'default');
     }
 
-    /**
-     * @param  array<int, string>  $availableAliases
-     */
-    private function migrateLegacyThemeAliases(array $availableAliases): void
-    {
-        foreach (self::LEGACY_THEME_ALIASES as $legacyAlias => $currentAlias) {
-            if (! in_array($currentAlias, $availableAliases, true)) {
-                continue;
-            }
-
-            $legacyTheme = InstalledTheme::query()->where('alias', $legacyAlias)->first();
-
-            if (! $legacyTheme instanceof InstalledTheme) {
-                continue;
-            }
-
-            $currentTheme = InstalledTheme::query()->where('alias', $currentAlias)->first();
-
-            if ($currentTheme instanceof InstalledTheme) {
-                if ($legacyTheme->is_active && ! $currentTheme->is_active) {
-                    $currentTheme->forceFill(['is_active' => true])->save();
-                }
-
-                $legacyTheme->delete();
-
-                continue;
-            }
-
-            $legacyTheme->forceFill([
-                'alias' => $currentAlias,
-                'updated_at' => now(),
-            ])->save();
-        }
-    }
-
-    private function normalizeStoredAlias(string $alias): string
-    {
-        return self::LEGACY_THEME_ALIASES[$alias] ?? $alias;
-    }
-
-    private function migrateLegacySettingPaths(mixed $value): mixed
-    {
-        if (is_array($value)) {
-            return array_map(fn (mixed $item): mixed => $this->migrateLegacySettingPaths($item), $value);
-        }
-
-        if (! is_string($value)) {
-            return $value;
-        }
-
-        return $this->migrateLegacyAssetUrl(
-            str_replace('/theme-assets/rhysman/', '/theme-assets/cmbcore/', $value),
-        );
-    }
+    // Các method migrateLegacyThemeAliases, normalizeStoredAlias,
+    // migrateLegacySettingPaths đã được chuyển vào:
+    //   php artisan theme:migrate-legacy
 
     /**
      * @return array<string, mixed>
@@ -1019,11 +946,7 @@ class ThemeManager
         if (is_string($value)) {
             $value = trim($value);
 
-            return $value !== ''
-                ? $this->migrateLegacyAssetUrl(
-                    str_replace('/theme-assets/rhysman/', '/theme-assets/cmbcore/', $value),
-                )
-                : (is_string($default) ? $default : null);
+            return $value !== '' ? $value : (is_string($default) ? $default : null);
         }
 
         return is_string($default) ? $default : null;
@@ -1109,10 +1032,7 @@ class ThemeManager
         return $icon !== '' ? $icon : null;
     }
 
-    private function migrateLegacyAssetUrl(string $value): string
-    {
-        return self::LEGACY_THEME_ASSET_URLS[$value] ?? $value;
-    }
+    // migrateLegacyAssetUrl đã được chuyển vào: php artisan theme:migrate-legacy
 
     private function publishPackageDirectory(string $sourcePath, string $targetPath, string $baseDirectory): void
     {
@@ -1175,7 +1095,7 @@ class ThemeManager
         $alias = is_array($session) ? ($session['alias'] ?? null) : null;
 
         return is_string($alias) && $alias !== ''
-            ? $this->normalizeStoredAlias($alias)
+            ? $alias
             : null;
     }
 

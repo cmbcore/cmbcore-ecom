@@ -21,42 +21,58 @@ class AuthController extends Controller
     }
 
     /**
+     * Login — stateless token auth (Sanctum PAT).
+     * Không dùng session, không cần CSRF cookie.
+     *
      * @throws ValidationException
      */
     public function login(LoginRequest $request): JsonResponse
     {
         $credentials = $request->safe()->only(['email', 'password']);
-        $remember = (bool) $request->boolean('remember');
 
-        if (! Auth::guard('web')->attempt($credentials, $remember)) {
+        // Auth::once → stateless, không tạo session
+        if (! Auth::once($credentials)) {
             throw ValidationException::withMessages([
                 'email' => [__('admin.auth.errors.invalid_credentials')],
             ]);
         }
 
-        $request->session()->regenerate();
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
 
-        if ($request->user() !== null) {
-            $this->activityLogService->remember($request, ['skip' => true]);
-            $this->activityLogService->log($request->user(), [
-                'action' => 'auth.login',
-                'description' => 'Admin signed in.',
-                'subject_type' => 'auth',
-                'request_method' => $request->method(),
-                'request_path' => $request->path(),
-                'route_uri' => $request->route()?->uri(),
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-                'payload' => [
-                    'email' => $request->input('email'),
-                    'remember' => $remember,
-                ],
+        // Kiểm tra quyền admin trước khi cấp token
+        if (! $user->canAccessAdminPanel()) {
+            throw ValidationException::withMessages([
+                'email' => [__('admin.auth.errors.invalid_credentials')],
             ]);
         }
 
+        // Xoá token cũ cùng tên (tránh tích luỹ) rồi tạo mới
+        $user->tokens()->where('name', 'admin-session')->delete();
+        $token = $user->createToken('admin-session')->plainTextToken;
+
+        $this->activityLogService->remember($request, ['skip' => true]);
+        $this->activityLogService->log($user, [
+            'action'         => 'auth.login',
+            'description'    => 'Admin signed in (token).',
+            'subject_type'   => 'auth',
+            'request_method' => $request->method(),
+            'request_path'   => $request->path(),
+            'route_uri'      => $request->route()?->uri(),
+            'ip_address'     => $request->ip(),
+            'user_agent'     => $request->userAgent(),
+            'payload'        => [
+                'email'    => $request->input('email'),
+                'remember' => (bool) $request->boolean('remember'),
+            ],
+        ]);
+
         return response()->json([
             'success' => true,
-            'data' => new AuthUserResource($request->user()),
+            'data'    => [
+                'token' => $token,
+                'user'  => new AuthUserResource($user),
+            ],
             'message' => __('admin.auth.messages.login_success'),
         ]);
     }
@@ -65,36 +81,36 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => new AuthUserResource($request->user()),
+            'data'    => new AuthUserResource($request->user()),
             'message' => __('admin.auth.messages.me_loaded'),
         ]);
     }
 
     public function logout(Request $request): JsonResponse
     {
-        if ($request->user() !== null) {
+        $user = $request->user();
+
+        if ($user !== null) {
             $this->activityLogService->remember($request, ['skip' => true]);
-            $this->activityLogService->log($request->user(), [
-                'action' => 'auth.logout',
-                'description' => 'Admin signed out.',
-                'subject_type' => 'auth',
+            $this->activityLogService->log($user, [
+                'action'         => 'auth.logout',
+                'description'    => 'Admin signed out.',
+                'subject_type'   => 'auth',
                 'request_method' => $request->method(),
-                'request_path' => $request->path(),
-                'route_uri' => $request->route()?->uri(),
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-                'payload' => [],
+                'request_path'   => $request->path(),
+                'route_uri'      => $request->route()?->uri(),
+                'ip_address'     => $request->ip(),
+                'user_agent'     => $request->userAgent(),
+                'payload'        => [],
             ]);
+
+            // Huỷ token hiện tại (stateless logout)
+            $user->currentAccessToken()->delete();
         }
-
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
 
         return response()->json([
             'success' => true,
-            'data' => null,
+            'data'    => null,
             'message' => __('admin.auth.messages.logout_success'),
         ]);
     }

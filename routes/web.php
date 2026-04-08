@@ -22,8 +22,7 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::get('/admin/{any?}', [AdminController::class, 'index'])
-    ->where('any', '^(?!login$).*')
-    ->middleware(['auth:sanctum', 'admin'])
+    ->where('any', '.*')
     ->name('admin');
 
 // ── Live preview route (loaded in admin iframe) ──────────────────────

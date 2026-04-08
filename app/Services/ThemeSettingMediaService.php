@@ -103,9 +103,6 @@ class ThemeSettingMediaService
             return null;
         }
 
-        if (Str::startsWith($path, '/theme-assets/rhysman/')) {
-            return Str::replaceFirst('/theme-assets/rhysman/', '/theme-assets/cmbcore/', $path);
-        }
 
         if (Str::startsWith($path, ['http://', 'https://'])) {
             return $this->downloadRemoteImage($themeAlias, $path);
