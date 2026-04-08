@@ -72,7 +72,8 @@ class ThemeSettingMediaService
         }
 
         if ($value instanceof UploadedFile) {
-            return Storage::disk('public')->url(
+            $disk = config('media_library.disk', 'public');
+            return Storage::disk($disk)->url(
                 $this->imageUploadService->store($value, "theme-settings/{$themeAlias}"),
             );
         }
@@ -85,7 +86,8 @@ class ThemeSettingMediaService
             $uploadToken = (string) ($value['upload_token'] ?? '');
 
             if ($uploadToken !== '' && isset($uploads[$uploadToken])) {
-                return Storage::disk('public')->url(
+                $disk = config('media_library.disk', 'public');
+                return Storage::disk($disk)->url(
                     $this->imageUploadService->store($uploads[$uploadToken], "theme-settings/{$themeAlias}"),
                 );
             }
@@ -242,7 +244,8 @@ class ThemeSettingMediaService
             true,
         );
 
-        return Storage::disk('public')->url(
+        $disk = config('media_library.disk', 'public');
+        return Storage::disk($disk)->url(
             $this->imageUploadService->store($file, "theme-settings/{$themeAlias}"),
         );
     }

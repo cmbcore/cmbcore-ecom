@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Card, Col, Form, Input, InputNumber, Row, Select, Space, Switch } from 'antd';
 import ImageResizer from '@admin/components/ImageResizer';
 import FontIcon from '@admin/components/ui/FontIcon';
+import IconPickerField from '@admin/components/ui/IconPickerField';
 import { useLocale } from '@admin/hooks/useLocale';
 import api from '@admin/services/api';
 import { showDeleteConfirm } from '@admin/utils/confirm';
@@ -97,6 +98,8 @@ function renderPrimitiveField(field) {
             return <Select mode="tags" tokenSeparators={[',']} open={false} />;
         case 'image':
             return <ImageResizer defaultPreset={field.preset ?? '1:1'} outputWidth={field.output_width ?? 800} />;
+        case 'icon':
+            return <IconPickerField />;
         case 'category-select':
             return <CategorySelectField />;
         case 'category-multi-select':

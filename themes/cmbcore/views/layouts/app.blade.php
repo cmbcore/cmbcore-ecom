@@ -10,6 +10,9 @@
     @endif
     @if (theme_has_vite_assets())
         {!! theme_vite_assets() !!}
+    @else
+        {{-- FontAwesome 6 CDN fallback khi chưa có Vite build --}}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
     @endif
     <style>
         :root {

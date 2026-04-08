@@ -1,0 +1,105 @@
+{
+  "name": "CMBCore - R2 Storage",
+  "alias": "cmbcore-r2-storage",
+  "version": "1.0.0",
+  "description": "Tích hợp Cloudflare R2 làm storage backend cho media. Khi bật, toàn bộ upload sẽ được lưu vào R2 bucket và trả về CDN URL. Hoàn toàn tương thích với file local đã tồn tại.",
+  "author": "CMBCore",
+  "requires": {
+    "core": ">=1.0.0",
+    "modules": []
+  },
+  "settings": [
+    {
+      "group": "connection",
+      "label": "Kết nối Cloudflare R2",
+      "fields": [
+        {
+          "key": "account_id",
+          "label": "Account ID",
+          "type": "text",
+          "default": "",
+          "description": "Cloudflare Account ID (tìm trong dashboard R2 của bạn)"
+        },
+        {
+          "key": "access_key_id",
+          "label": "Access Key ID",
+          "type": "text",
+          "default": "",
+          "description": "R2 Access Key ID (tạo trong R2 → Manage R2 API tokens)"
+        },
+        {
+          "key": "secret_access_key",
+          "label": "Secret Access Key",
+          "type": "text",
+          "default": "",
+          "description": "R2 Secret Access Key tương ứng với Access Key ID"
+        },
+        {
+          "key": "bucket",
+          "label": "Bucket Name",
+          "type": "text",
+          "default": "",
+          "description": "Tên bucket R2 đã tạo"
+        }
+      ]
+    },
+    {
+      "group": "url",
+      "label": "URL & Đường dẫn",
+      "fields": [
+        {
+          "key": "region",
+          "label": "Region",
+          "type": "text",
+          "default": "auto",
+          "description": "Giữ nguyên 'auto' cho Cloudflare R2"
+        },
+        {
+          "key": "public_url",
+          "label": "Public URL (CDN/Custom Domain)",
+          "type": "text",
+          "default": "",
+          "description": "URL công khai cho bucket. VD: https://pub-xxx.r2.dev hoặc https://cdn.yourdomain.com"
+        }
+      ]
+    },
+    {
+      "group": "options",
+      "label": "Tùy chọn",
+      "fields": [
+        {
+          "key": "upload_folder",
+          "label": "Thư mục upload mặc định",
+          "type": "text",
+          "default": "uploads",
+          "description": "Tiền tố thư mục trong bucket (không cần dấu '/' đầu)"
+        },
+        {
+          "key": "visibility",
+          "label": "Visibility mặc định",
+          "type": "select",
+          "default": "public",
+          "options": [
+            { "value": "public", "label": "Public (truy cập công khai)" },
+            { "value": "private", "label": "Private (cần signed URL)" }
+          ]
+        }
+      ]
+    }
+  ],
+  "hooks": {
+    "listens": []
+  },
+  "admin": {
+    "menu": [
+      {
+        "label": "R2 Storage",
+        "icon": "fa-solid fa-cloud",
+        "route": "/admin/plugins/cmbcore-r2-storage/dashboard"
+      }
+    ],
+    "pages": {
+      "/admin/plugins/cmbcore-r2-storage/dashboard": "plugins/CmbcoreR2Storage/resources/js/pages/R2StorageDashboard.jsx"
+    }
+  }
+}

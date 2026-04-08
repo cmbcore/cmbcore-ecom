@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Card, Form, Input, Select, Space } from 'antd';
 import FontIcon from '@admin/components/ui/FontIcon';
+import IconPickerField from '@admin/components/ui/IconPickerField';
 import { useLocale } from '@admin/hooks/useLocale';
 import { showDeleteConfirm } from '@admin/utils/confirm';
 
@@ -89,24 +90,21 @@ export default function ThemeMenuEditor({ menu, menuIndex }) {
                                         <Input placeholder="/products hoặc https://..." prefix={<FontIcon name="link" />} />
                                     </Form.Item>
 
-                                    <Space size={16} style={{ display: 'flex' }} align="start">
-                                        <Form.Item
-                                            label="Icon (tùy chọn)"
-                                            name={[field.name, 'icon']}
-                                            style={{ flex: 1 }}
-                                        >
-                                            <Input placeholder="fa-home" />
-                                        </Form.Item>
+                                    <Form.Item
+                                        label="Icon (tùy chọn)"
+                                        name={[field.name, 'icon']}
+                                    >
+                                        <IconPickerField />
+                                    </Form.Item>
 
-                                        <Form.Item
-                                            label="Mở link"
-                                            name={[field.name, 'target']}
-                                            style={{ width: 180 }}
-                                            initialValue="_self"
-                                        >
-                                            <Select options={TARGET_OPTIONS} />
-                                        </Form.Item>
-                                    </Space>
+                                    <Form.Item
+                                        label="Mở link"
+                                        name={[field.name, 'target']}
+                                        style={{ width: 200 }}
+                                        initialValue="_self"
+                                    >
+                                        <Select options={TARGET_OPTIONS} />
+                                    </Form.Item>
                                 </Space>
                             </Card>
                         ))}

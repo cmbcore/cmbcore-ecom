@@ -109,6 +109,9 @@
                     @endphp
                     <div class="cmbcore-menu__item {{ $isActive ? 'is-active' : '' }} {{ $submenu ? 'has-submenu' : '' }}">
                         <a href="{{ theme_menu_url($item) }}" target="{{ theme_menu_target($item) }}" @if (theme_menu_rel($item)) rel="{{ theme_menu_rel($item) }}" @endif>
+                            @if (theme_menu_icon_class($item))
+                                <i aria-hidden="true" class="{{ theme_menu_icon_class($item) }} cmbcore-menu__icon"></i>
+                            @endif
                             {{ theme_menu_label($item) }}
                         </a>
 
@@ -178,6 +181,9 @@
                 <div class="cmbcore-drawer__item {{ $submenu ? 'has-children' : '' }}">
                     <div class="cmbcore-drawer__item-head">
                         <a href="{{ theme_menu_url($item) }}" target="{{ theme_menu_target($item) }}" @if (theme_menu_rel($item)) rel="{{ theme_menu_rel($item) }}" @endif>
+                            @if (theme_menu_icon_class($item))
+                                <i aria-hidden="true" class="{{ theme_menu_icon_class($item) }} cmbcore-menu__icon"></i>
+                            @endif
                             {{ theme_menu_label($item) }}
                         </a>
                         @if ($submenu)
