@@ -1216,6 +1216,8 @@
 html {
     background: #000;
     scroll-behavior: smooth;
+    /* Chừa chỗ cho header sticky khi nhảy tới anchor (#mục lục, TOC) */
+    scroll-padding-top: var(--cmbcore-header-offset, 137px);
 }
 
 body.cmbcore-shell {
@@ -2043,7 +2045,8 @@ ol {
     gap: 18px;
     align-content: start;
     position: sticky;
-    top: 16px;
+    /* Neo dưới header sticky thay vì top:16px (đỉnh sidebar bị header che) */
+    top: var(--cmbcore-header-offset, 137px);
 }
 
 .cmbcore-sidebar__widget {
@@ -2179,10 +2182,13 @@ ol {
     align-items: start;
 }
 
-/* Gallery giữ nguyên vị trí khi cuộn trang (sticky) */
+/* Gallery cuộn theo trang như giao diện mẫu (rhysman.vn dùng position relative,
+   không sticky) — tránh ảnh/thumbnail bị ghim cố định và đè lên phần thông tin
+   sản phẩm khi layout về 1 cột trên tablet/mobile. */
 .cmbcore-gallery {
-    position: sticky;
-    top: 16px;
+    position: static;
+    top: auto;
+    align-self: start;
 }
 
 .cmbcore-gallery__main {
@@ -3043,22 +3049,56 @@ ol {
     }
 
     .cmbcore-header__main-inner {
-        grid-template-columns: auto minmax(0, 1fr) auto;
-        gap: 12px;
-        min-height: 64px;
+        /* 2 cột 1fr hai bên giữ logo căn giữa thật, hamburger trái, phải để trống */
+        grid-template-columns: 1fr auto 1fr;
+        gap: 10px;
+        min-height: 56px;
     }
 
     .cmbcore-menu-toggle {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        grid-column: 1;
+        justify-self: start;
+        width: 38px;
+        height: 38px;
     }
 
     .cmbcore-logo {
+        grid-column: 2;
         justify-self: center;
-        width: 120px;
+        width: auto;
+    }
+
+    .cmbcore-logo img {
+        width: auto;
+        max-height: 30px;
     }
 
     .cmbcore-search {
         display: none;
+    }
+
+    /* Ô tìm kiếm mobile phải hiện lại (rule .cmbcore-search{display:none} ở trên
+       cũng khớp .cmbcore-search--mobile nên cần bật lại sau nó) */
+    .cmbcore-search--mobile {
+        display: block;
+        max-width: none;
+    }
+
+    .cmbcore-search--mobile input {
+        height: 38px;
+        padding: 0 16px 0 40px;
+        border-radius: 999px;
+        background: #fff;
+        color: #111;
+        font-size: 13px;
+    }
+
+    .cmbcore-search--mobile .cmbcore-search__icon {
+        left: 14px;
+        color: #666;
     }
 
     .cmbcore-drawer-backdrop,

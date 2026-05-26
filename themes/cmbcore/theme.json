@@ -1,7 +1,7 @@
 {
   "name": "Cmbcore Theme Pack",
   "alias": "cmbcore",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Theme storefront đóng gói theo baseline Cmbcore với homepage, product, blog và static page đồng bộ.",
   "author": "Dev Team",
   "parent": "default",

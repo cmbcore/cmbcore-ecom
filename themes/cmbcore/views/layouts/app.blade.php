@@ -24,6 +24,10 @@
             --cmbcore-border: #e8e8e8;
             --cmbcore-star: #f9d637;
             --cmbcore-container: min(1310px, calc(100% - 32px));
+            /* Chiều cao header sticky desktop (~121px) + khoảng đệm 16px.
+               Dùng cho scroll-padding và offset của các phần tử sticky để
+               nội dung không bị header che khi neo/anchor. */
+            --cmbcore-header-offset: 137px;
         }
     </style>
     <link rel="stylesheet" href="{{ theme_asset('css/theme.css') }}">
