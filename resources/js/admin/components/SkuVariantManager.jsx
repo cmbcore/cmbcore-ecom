@@ -14,13 +14,19 @@ function createSkuKey() {
 
 function normalizeAttributeSets(attributeSets = []) {
     return attributeSets
-        .map((item) => ({
-            name: String(item?.name ?? '').trim(),
-            values: String(item?.values ?? '')
-                .split(',')
-                .map((value) => value.trim())
-                .filter(Boolean),
-        }))
+        .map((item) => {
+            // `values` can be an array (tag input) or a legacy comma string.
+            const rawValues = Array.isArray(item?.values)
+                ? item.values
+                : String(item?.values ?? '').split(',');
+
+            return {
+                name: String(item?.name ?? '').trim(),
+                values: rawValues
+                    .map((value) => String(value).trim())
+                    .filter(Boolean),
+            };
+        })
         .filter((item) => item.name && item.values.length > 0);
 }
 
@@ -151,9 +157,17 @@ export default function SkuVariantManager({ form, productType = 'simple' }) {
                                         <Form.Item
                                             label={t('sku_variants.attribute_sets.fields.values')}
                                             name={[field.name, 'values']}
-                                            style={{ minWidth: 320 }}
+                                            style={{ minWidth: 360 }}
+                                            extra={t('sku_variants.attribute_sets.placeholders.values')}
                                         >
-                                            <Input placeholder={t('sku_variants.attribute_sets.placeholders.values')} />
+                                            <Select
+                                                mode="tags"
+                                                tokenSeparators={[',']}
+                                                open={false}
+                                                suffixIcon={null}
+                                                placeholder={t('sku_variants.attribute_sets.placeholders.values')}
+                                                style={{ minWidth: 320 }}
+                                            />
                                         </Form.Item>
 
                                         <Button

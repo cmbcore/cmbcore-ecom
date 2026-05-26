@@ -9,20 +9,28 @@ import api from '@admin/services/api';
 function renderField(field) {
     switch (field.type) {
         case 'number':
-            return <InputNumber min={field.min} max={field.max} style={{ width: '100%' }} />;
+            return <InputNumber min={field.min} max={field.max} step={field.step ?? 1} style={{ width: '100%' }} placeholder={field.placeholder} />;
         case 'boolean':
             return <Switch />;
         case 'select':
             return (
                 <Select
+                    allowClear
+                    placeholder={field.placeholder}
                     options={(field.options ?? []).map((option) => ({
                         value: option.value,
                         label: option.label,
                     }))}
                 />
             );
+        case 'textarea':
+            return <Input.TextArea rows={field.rows ?? 4} placeholder={field.placeholder} />;
+        case 'password':
+            return <Input.Password autoComplete="new-password" placeholder={field.placeholder} />;
+        case 'color':
+            return <Input type="color" style={{ width: 56, padding: 4 }} />;
         default:
-            return <Input />;
+            return <Input placeholder={field.placeholder} />;
     }
 }
 
@@ -98,6 +106,7 @@ export default function PluginSettings() {
                                             key={field.key}
                                             label={field.label}
                                             name={['settings', field.key]}
+                                            extra={field.description}
                                             valuePropName={field.type === 'boolean' ? 'checked' : 'value'}
                                         >
                                             {renderField(field)}

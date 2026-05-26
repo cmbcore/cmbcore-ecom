@@ -133,10 +133,17 @@ export default function Dashboard() {
         fetchDashboard();
     }, [fetchDashboard]);
 
+    // Hide developer-facing "placeholder" mock widgets (they surface raw
+    // schema keys like `admin.dashboard.widgets.*`, which are meaningless to
+    // store operators). All real metric/list widgets are kept.
+    const visibleWidgets = (payload.widgets ?? []).filter(
+        (widget) => widget.type !== 'placeholder',
+    );
+
     const widgetsByZone = Object.fromEntries(
         WIDGET_ZONE_ORDER.map((zone) => [
             zone,
-            (payload.widgets ?? []).filter((widget) => (widget.zone ?? 'primary') === zone),
+            visibleWidgets.filter((widget) => (widget.zone ?? 'primary') === zone),
         ]),
     );
 

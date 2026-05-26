@@ -6,8 +6,19 @@ import { useLocale } from '@admin/hooks/useLocale';
 import { useModules } from '../hooks/useModules';
 
 /**
+ * A submenu parent often shares its route with one of its children
+ * (e.g. "Sản phẩm" and its "Tất cả sản phẩm" child both point at
+ * /admin/products). AntD requires unique keys, so parents that have
+ * children get a namespaced key while leaves keep their real route.
+ */
+function submenuKey(route) {
+    return `group:${route}`;
+}
+
+/**
  * Build an AntD Menu item from a module menu entry.
- * Key = route so selectedKeys={[location.pathname]} works.
+ * Leaf key = route so selectedKeys={[location.pathname]} works;
+ * submenu parents use a namespaced key to avoid duplicate-key warnings.
  */
 function mapMenuItem(item) {
     const children =
@@ -16,7 +27,7 @@ function mapMenuItem(item) {
             : undefined;
 
     return {
-        key: item.route,
+        key: children ? submenuKey(item.route) : item.route,
         icon: item.icon ? <FontIcon name={item.icon} /> : null,
         label: item.label,
         children,
@@ -41,7 +52,7 @@ function findOpenKeys(items, pathname) {
                             pathname.startsWith(c.route + '/'),
                     )
                 ) {
-                    result.push(node.route);
+                    result.push(submenuKey(node.route));
                     return true;
                 }
             }

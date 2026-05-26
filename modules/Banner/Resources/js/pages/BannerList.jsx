@@ -41,7 +41,16 @@ function BannerModal({ open, initialValues, onCancel, onSubmit }) {
 export default function BannerList() {
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([]);
+    const [search, setSearch] = useState('');
     const [modalState, setModalState] = useState({ open: false, initialValues: null });
+
+    const keyword = search.trim().toLowerCase();
+    const filteredItems = keyword
+        ? items.filter((item) =>
+            [item.title, item.position].some((field) =>
+                String(field ?? '').toLowerCase().includes(keyword),
+            ))
+        : items;
 
     const fetchItems = useCallback(async () => {
         setLoading(true);
@@ -96,10 +105,19 @@ export default function BannerList() {
                     },
                 ]}
             />
+            <div style={{ marginBottom: 16, maxWidth: 360 }}>
+                <Input
+                    allowClear
+                    prefix={<FontIcon name="search" />}
+                    placeholder="Tìm theo tiêu đề hoặc vị trí…"
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                />
+            </div>
             <Table
                 rowKey="id"
                 loading={loading}
-                dataSource={items}
+                dataSource={filteredItems}
                 pagination={false}
                 columns={[
                     { title: 'Tiêu đề', dataIndex: 'title' },

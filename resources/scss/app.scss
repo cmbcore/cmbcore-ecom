@@ -22,8 +22,19 @@ body {
 
 .admin-sidebar {
     height: 100%;
-    padding: 24px 16px;
+    padding: 24px 12px;
     background: transparent;
+}
+
+/* Keep long top-level labels (e.g. "Cài đặt & Hệ thống") from being clipped
+   by the submenu arrow — give the title room and let it wrap if truly long. */
+.admin-sidebar .ant-menu-submenu-title {
+    padding-right: 28px !important;
+}
+
+.admin-sidebar .ant-menu-title-content {
+    white-space: normal;
+    line-height: 1.25;
 }
 
 .admin-sidebar__brand {

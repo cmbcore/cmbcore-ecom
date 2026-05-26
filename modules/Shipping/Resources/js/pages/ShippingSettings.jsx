@@ -29,8 +29,18 @@ function ZoneModal({ open, onCancel, onSubmit, initialValues }) {
                 <Form.Item name="name" label="Tên khu vực" rules={[{ required: true, message: 'Vui lòng nhập tên khu vực.' }]}>
                     <Input />
                 </Form.Item>
-                <Form.Item name="provinces" label="Tỉnh/Thành phố (mỗi dòng một giá trị)">
-                    <Input.TextArea rows={5} placeholder="Để trống = áp dụng toàn quốc" />
+                <Form.Item
+                    name="provinces"
+                    label="Tỉnh/Thành phố áp dụng"
+                    extra="Gõ tên tỉnh/thành rồi nhấn Enter để thêm. Để trống = áp dụng toàn quốc."
+                >
+                    <Select
+                        mode="tags"
+                        tokenSeparators={['\n', ',']}
+                        open={false}
+                        suffixIcon={null}
+                        placeholder="VD: Hà Nội, Hồ Chí Minh, Đà Nẵng…"
+                    />
                 </Form.Item>
                 <Form.Item name="sort_order" label="Thứ tự sắp xếp">
                     <InputNumber min={0} style={{ width: '100%' }} />
@@ -147,7 +157,10 @@ export default function ShippingSettings() {
         try {
             await api.post('/shipping/zones', {
                 ...values,
-                provinces: typeof values.provinces === 'string' ? values.provinces : '',
+                // Backend expects a newline-separated string; the tag input gives an array.
+                provinces: Array.isArray(values.provinces)
+                    ? values.provinces.join('\n')
+                    : (values.provinces ?? ''),
             });
             setZoneModal({ open: false, initialValues: null });
             message.success('Đã lưu khu vực giao hàng.');
@@ -227,7 +240,7 @@ export default function ShippingSettings() {
                                             title: 'Thao tác',
                                             render: (_, zone) => (
                                                 <Space>
-                                                    <Button size="small" onClick={() => setZoneModal({ open: true, initialValues: { ...zone, provinces: (zone.provinces ?? []).join('\n') } })}>Sửa</Button>
+                                                    <Button size="small" onClick={() => setZoneModal({ open: true, initialValues: { ...zone, provinces: zone.provinces ?? [] } })}>Sửa</Button>
                                                     <Popconfirm {...deletePopconfirmProps(() => deleteZone(zone.id))}>
                                                         <Button size="small" danger>Xóa</Button>
                                                     </Popconfirm>
