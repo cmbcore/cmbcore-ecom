@@ -1442,7 +1442,7 @@ ol {
     display: block;
     width: 16px;
     height: 2px;
-    margin: 4px auto;
+    margin: 2px auto;
     background: currentColor;
 }
 
@@ -3063,6 +3063,7 @@ ol {
         justify-self: start;
         width: 38px;
         height: 38px;
+        flex-direction: column;
     }
 
     .cmbcore-logo {
