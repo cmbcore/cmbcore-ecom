@@ -1,6 +1,204 @@
 (function () {
     const body = document.body;
 
+    function formatMoney(value) {
+        return new Intl.NumberFormat(document.documentElement.lang === 'vi' ? 'vi-VN' : 'en-US', {
+            style: 'currency',
+            currency: 'VND',
+            maximumFractionDigits: 0,
+        }).format(Number(value) || 0);
+    }
+
+    function escapeHtml(value) {
+        const div = document.createElement('div');
+        div.textContent = String(value ?? '');
+
+        return div.innerHTML;
+    }
+
+    function showToast(message, options) {
+        const isError = options?.isError ?? false;
+
+        let stack = document.querySelector('[data-cmbcore-toast-stack]');
+
+        if (!(stack instanceof HTMLElement)) {
+            stack = document.createElement('div');
+            stack.className = 'cmbcore-toast-stack';
+            stack.setAttribute('data-cmbcore-toast-stack', '');
+            document.body.appendChild(stack);
+        }
+
+        const toast = document.createElement('div');
+        toast.className = `cmbcore-toast${isError ? ' is-error' : ''}`;
+        toast.innerHTML = `
+            <i class="fa-solid ${isError ? 'fa-circle-exclamation' : 'fa-circle-check'}" aria-hidden="true"></i>
+            <span></span>
+        `;
+
+        const label = toast.querySelector('span');
+
+        if (label instanceof HTMLElement) {
+            label.textContent = message;
+        }
+
+        stack.appendChild(toast);
+
+        window.requestAnimationFrame(() => toast.classList.add('is-visible'));
+
+        window.setTimeout(() => {
+            toast.classList.remove('is-visible');
+            window.setTimeout(() => toast.remove(), 250);
+        }, 2600);
+    }
+
+    function updateCartWidgets(cart) {
+        const totalQuantity = Number(cart?.total_quantity ?? 0);
+        const items = Array.isArray(cart?.items) ? cart.items : [];
+
+        document.querySelectorAll('[data-cart-badge]').forEach((badge) => {
+            badge.textContent = String(totalQuantity);
+            badge.style.display = totalQuantity > 0 ? '' : 'none';
+        });
+
+        document.querySelectorAll('[data-cart-drawer-count]').forEach((el) => {
+            el.textContent = String(totalQuantity);
+        });
+
+        document.querySelectorAll('[data-cart-drawer-subtotal]').forEach((el) => {
+            el.textContent = formatMoney(cart?.subtotal ?? 0);
+        });
+
+        document.querySelectorAll('[data-cart-drawer-items]').forEach((container) => {
+            if (items.length === 0) {
+                container.innerHTML = '<p class="cmbcore-cart-drawer__empty" data-cart-drawer-empty>Giỏ hàng của bạn đang trống.</p>';
+
+                return;
+            }
+
+            container.innerHTML = items.map((item) => `
+                <div class="cmbcore-cart-drawer__item">
+                    <div class="cmbcore-cart-drawer__item-info">
+                        <strong>${escapeHtml(item.product_name)}</strong>
+                        ${item.sku_name ? `<span class="cmbcore-cart-drawer__item-variant">${escapeHtml(item.sku_name)}</span>` : ''}
+                        <span class="cmbcore-cart-drawer__item-qty">${item.quantity} × ${formatMoney(item.unit_price)}</span>
+                    </div>
+                </div>
+            `).join('');
+        });
+    }
+
+    function initCartWidget() {
+        document.querySelectorAll('[data-cmbcore-cart]').forEach((widget) => {
+            const trigger = widget.querySelector('[data-cmbcore-cart-toggle]');
+            const drawer = widget.querySelector('[data-cmbcore-cart-drawer]');
+
+            if (!(trigger instanceof HTMLButtonElement) || !(drawer instanceof HTMLElement)) {
+                return;
+            }
+
+            let closeTimer = null;
+
+            const setOpen = (isOpen) => {
+                if (closeTimer !== null) {
+                    window.clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+
+                widget.classList.toggle('is-open', isOpen);
+                trigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            };
+
+            widget.addEventListener('mouseenter', () => setOpen(true));
+
+            widget.addEventListener('mouseleave', () => {
+                closeTimer = window.setTimeout(() => setOpen(false), 200);
+            });
+
+            trigger.addEventListener('click', (event) => {
+                event.preventDefault();
+                setOpen(!widget.classList.contains('is-open'));
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!(event.target instanceof Node) || !widget.contains(event.target)) {
+                    setOpen(false);
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    setOpen(false);
+                }
+            });
+        });
+    }
+
+    function initAjaxAddToCart() {
+        const forms = new Set();
+
+        document.querySelectorAll('[data-cmbcore-quick-add]').forEach((form) => forms.add(form));
+        document.querySelectorAll('[data-product-purchase-form]').forEach((form) => forms.add(form));
+
+        forms.forEach((form) => {
+            if (!(form instanceof HTMLFormElement)) {
+                return;
+            }
+
+            form.addEventListener('submit', (event) => {
+                const submitter = event.submitter;
+
+                // Only the "Thêm vào giỏ hàng" action goes through AJAX — "Mua ngay"
+                // on the same form keeps its normal full-page submit to checkout.
+                const isBuyNow = form.hasAttribute('data-product-purchase-form')
+                    && !(submitter instanceof HTMLElement && submitter.hasAttribute('data-cmbcore-add-to-cart'));
+
+                if (isBuyNow) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const button = submitter instanceof HTMLButtonElement ? submitter : form.querySelector('button[type="submit"]');
+                const wasDisabled = button?.disabled ?? false;
+
+                if (button instanceof HTMLButtonElement) {
+                    button.disabled = true;
+                }
+
+                fetch('/api/storefront/cart/items', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { Accept: 'application/json' },
+                    body: new FormData(form),
+                })
+                    .then((response) => response.json().then((json) => ({ ok: response.ok, json })))
+                    .then(({ ok, json }) => {
+                        if (!ok || !json.success) {
+                            const firstError = json?.errors ? Object.values(json.errors)[0] : null;
+                            const message = json?.message
+                                || (Array.isArray(firstError) ? firstError[0] : null)
+                                || 'Không thể thêm sản phẩm vào giỏ hàng.';
+
+                            showToast(message, { isError: true });
+
+                            return;
+                        }
+
+                        updateCartWidgets(json.data);
+                        showToast(json.message || 'Đã thêm vào giỏ hàng.');
+                    })
+                    .catch(() => {
+                        showToast('Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.', { isError: true });
+                    })
+                    .finally(() => {
+                        if (button instanceof HTMLButtonElement) {
+                            button.disabled = wasDisabled;
+                        }
+                    });
+            });
+        });
+    }
+
     function initDrawer() {
         const toggles = document.querySelectorAll('[data-cmbcore-drawer-toggle]');
         const closers = document.querySelectorAll('[data-cmbcore-drawer-close]');
@@ -476,6 +674,8 @@
     initQuantity();
     initProductSwatches();
     initDescriptionToggle();
+    initCartWidget();
+    initAjaxAddToCart();
     initToc();
     initTocInline();
     initFlashSaleCountdown();

@@ -237,6 +237,49 @@ class CartService
         return $this->payload($this->getOrCreateActiveCart($user));
     }
 
+    /**
+     * Cart summary for the header widget (badge count + mini preview). Unlike
+     * getOrCreateActiveCart(), this never creates a cart row just from a page
+     * view — most visitors browsing without adding anything shouldn't leave
+     * an empty cart behind.
+     */
+    public function headerPreview(?User $user = null): array
+    {
+        $cart = $this->findExistingActiveCart($user);
+
+        if ($cart === null) {
+            return [
+                'id' => null,
+                'status' => null,
+                'items' => [],
+                'total_quantity' => 0,
+                'subtotal' => 0.0,
+                'grand_total' => 0.0,
+            ];
+        }
+
+        return $this->payload($cart);
+    }
+
+    private function findExistingActiveCart(?User $user = null): ?ShoppingCart
+    {
+        $query = ShoppingCart::query()
+            ->where('status', ShoppingCart::STATUS_ACTIVE)
+            ->with(['items.product', 'items.sku.attributes']);
+
+        if ($user !== null) {
+            return $query->where('user_id', $user->id)->first();
+        }
+
+        $token = $this->cartSessionService->currentGuestToken();
+
+        if ($token === null) {
+            return null;
+        }
+
+        return $query->where('guest_token', $token)->first();
+    }
+
     public function previewBuyNow(int $skuId, int $quantity): array
     {
         $sku = $this->resolvePurchasableSku($skuId);

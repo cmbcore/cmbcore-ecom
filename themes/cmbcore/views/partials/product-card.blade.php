@@ -9,7 +9,9 @@
     $productUrl = theme_route_url('storefront.products.show', ['slug' => $product['slug']]);
     $reviewCount = (int) ($product['review_count'] ?? 0);
     $soldCount = $product['sold_count'] ?? 0;
-    $defaultSkuId = collect($product['skus'] ?? [])->first()['id'] ?? '';
+    // Chỉ SKU "active" mới mua được (xem CartService::resolvePurchasableSku) — nếu
+    // SKU đầu tiên đang inactive, nút quick-buy sẽ gửi lên một ID bị từ chối.
+    $defaultSkuId = collect($product['skus'] ?? [])->firstWhere('status', 'active')['id'] ?? '';
     $soldDisplay = is_numeric($soldCount) && (float)$soldCount >= 1000
         ? number_format((float)$soldCount / 1000, 1) . 'k'
         : $soldCount;
@@ -32,18 +34,20 @@
         </a>
 
         {{-- Quick-buy bag icon button (outside <a> to avoid invalid nesting) --}}
-        <form method="post" action="{{ route('storefront.cart.store') }}" class="cmbcore-product-card__quick-buy">
-            @csrf
-            <input type="hidden" name="product_sku_id" value="{{ $defaultSkuId }}">
-            <input type="hidden" name="quantity" value="1">
-            <button type="submit" class="cmbcore-product-card__cart-btn" aria-label="Thêm vào giỏ">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
-                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <path d="M16 10a4 4 0 0 1-8 0"/>
-                </svg>
-            </button>
-        </form>
+        @if ($defaultSkuId)
+            <form method="post" action="{{ route('storefront.cart.store') }}" class="cmbcore-product-card__quick-buy" data-cmbcore-quick-add>
+                @csrf
+                <input type="hidden" name="product_sku_id" value="{{ $defaultSkuId }}">
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="cmbcore-product-card__cart-btn" aria-label="Thêm vào giỏ">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                </button>
+            </form>
+        @endif
     </div>
 
     <div class="cmbcore-product-card__body">

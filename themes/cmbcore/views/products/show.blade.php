@@ -154,7 +154,7 @@
                             @csrf
                             <input type="hidden" name="product_sku_id" value="{{ $defaultSku['id'] ?? '' }}" data-product-sku-input>
                             <input type="hidden" name="quantity" value="1" data-product-quantity-input>
-                            <button type="submit" class="cmbcore-button is-secondary cmbcore-button--uppercase">THÊM VÀO GIỎ HÀNG</button>
+                            <button type="submit" class="cmbcore-button is-secondary cmbcore-button--uppercase" data-cmbcore-add-to-cart>THÊM VÀO GIỎ HÀNG</button>
                             <button type="submit" formaction="{{ route('storefront.checkout.buy_now') }}" class="cmbcore-button is-primary cmbcore-button--uppercase">MUA NGAY</button>
                         </form>
                     @else

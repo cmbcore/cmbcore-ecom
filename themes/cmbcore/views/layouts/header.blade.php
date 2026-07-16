@@ -8,6 +8,8 @@
         ? route('storefront.account.dashboard')
         : route('storefront.account.login');
     $cartUrl = route('storefront.cart.index');
+    $cartPreview = app(\Modules\Cart\Services\CartService::class)->headerPreview(auth()->user());
+    $cartCount = (int) ($cartPreview['total_quantity'] ?? 0);
     $aboutUrl = theme_url('/gioi-thieu/');
     $blogUrl = theme_route_url('storefront.blog.categories.show', ['slug' => 'tin-tuc']);
     $storefrontReadiness = app(\App\Services\StorefrontDataReadiness::class);
@@ -73,9 +75,49 @@
                 <a class="cmbcore-header__action" href="{{ $accountUrl }}" aria-label="Tài khoản">
                     <i class="fa-regular fa-user" aria-hidden="true"></i>
                 </a>
-                <a class="cmbcore-header__action" href="{{ $cartUrl }}" aria-label="Giỏ hàng">
-                    <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
-                </a>
+
+                <div class="cmbcore-cart-widget" data-cmbcore-cart>
+                    <button
+                        type="button"
+                        class="cmbcore-header__action cmbcore-cart-widget__trigger"
+                        data-cmbcore-cart-toggle
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        aria-controls="cmbcore-cart-drawer"
+                        aria-label="Giỏ hàng"
+                    >
+                        <i class="fa-solid fa-bag-shopping" aria-hidden="true"></i>
+                        <span class="cmbcore-cart-badge" data-cart-badge style="{{ $cartCount > 0 ? '' : 'display:none' }}">{{ $cartCount }}</span>
+                    </button>
+
+                    <div class="cmbcore-cart-drawer" id="cmbcore-cart-drawer" data-cmbcore-cart-drawer>
+                        <div class="cmbcore-cart-drawer__header">
+                            <strong>Giỏ hàng (<span data-cart-drawer-count>{{ $cartCount }}</span>)</strong>
+                        </div>
+                        <div class="cmbcore-cart-drawer__items" data-cart-drawer-items>
+                            @forelse (($cartPreview['items'] ?? []) as $item)
+                                <div class="cmbcore-cart-drawer__item">
+                                    <div class="cmbcore-cart-drawer__item-info">
+                                        <strong>{{ $item['product_name'] }}</strong>
+                                        @if (!empty($item['sku_name']))
+                                            <span class="cmbcore-cart-drawer__item-variant">{{ $item['sku_name'] }}</span>
+                                        @endif
+                                        <span class="cmbcore-cart-drawer__item-qty">{{ $item['quantity'] }} × {{ theme_money($item['unit_price']) }}</span>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="cmbcore-cart-drawer__empty" data-cart-drawer-empty>Giỏ hàng của bạn đang trống.</p>
+                            @endforelse
+                        </div>
+                        <div class="cmbcore-cart-drawer__footer">
+                            <div class="cmbcore-cart-drawer__total">
+                                <span>Tạm tính</span>
+                                <strong data-cart-drawer-subtotal>{{ theme_money($cartPreview['subtotal'] ?? 0) }}</strong>
+                            </div>
+                            <a class="cmbcore-button is-primary" href="{{ $cartUrl }}">Xem giỏ hàng</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
