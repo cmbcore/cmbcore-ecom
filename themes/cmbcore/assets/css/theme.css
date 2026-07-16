@@ -663,8 +663,6 @@
     border: 1px solid #ffd8ca;
 }
 
-.cmbcore-swatch.is-active,
-.cmbcore-swatch:hover,
 .cmbcore-button.is-primary {
     background: #ed2524;
     border-color: #ed2524;
@@ -2357,24 +2355,33 @@ ol {
 .cmbcore-swatches {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 10px;
 }
 
 .cmbcore-swatch {
-    min-height: 38px;
-    padding: 0 14px;
-    border: 1px solid #d8d8d8;
-    border-radius: 999px;
+    min-height: 36px;
+    padding: 0 16px;
+    border: 1px solid #d5d5d5;
+    border-radius: 4px;
     background: #fff;
+    color: #111;
     font-size: 13px;
     font-weight: 600;
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
-.cmbcore-swatch.is-active,
+/* Hover chỉ làm đậm viền — không đổi màu nền, để không bị nhầm với thuộc tính
+   đang thực sự được chọn (is-active). */
 .cmbcore-swatch:hover {
-    border-color: #111;
-    background: #111;
-    color: #fff;
+    border-color: #999;
+}
+
+.cmbcore-swatch.is-active {
+    border-color: var(--cmbcore-primary);
+    box-shadow: 0 0 0 1px var(--cmbcore-primary);
+    color: var(--cmbcore-primary);
+    background: #fff;
 }
 
 .cmbcore-quantity {
