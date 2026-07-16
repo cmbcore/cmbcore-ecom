@@ -277,7 +277,7 @@
     }
 
     function initDescriptionToggle() {
-        const collapsedHeight = 360;
+        const collapsedLines = 3;
 
         document.querySelectorAll('[data-cmbcore-description]').forEach((wrapper) => {
             const content = wrapper.querySelector('[data-description-content]');
@@ -288,14 +288,22 @@
                 return;
             }
 
-            // Only collapse (and show the toggle) when the content actually
-            // overflows the collapsed height — short descriptions stay as-is.
-            if (content.scrollHeight <= collapsedHeight + 40) {
+            // Derive the collapsed height from the rendered line-height so "3 dòng"
+            // stays correct regardless of the theme's font-size/line-height settings.
+            const lineHeight = Number.parseFloat(window.getComputedStyle(content).lineHeight) || 24;
+            const collapsedHeight = Math.round(lineHeight * collapsedLines);
+
+            // Only collapse (and show the toggle) when the content actually spans
+            // more than the collapsed line count — short descriptions stay as-is.
+            if (content.scrollHeight <= collapsedHeight + lineHeight) {
                 return;
             }
 
             const readMoreText = toggle.getAttribute('data-read-more-text') || 'Xem thêm';
             const readLessText = toggle.getAttribute('data-read-less-text') || 'Thu gọn';
+
+            wrapper.style.setProperty('--cmbcore-description-fade', `${Math.round(lineHeight)}px`);
+            content.style.maxHeight = `${collapsedHeight}px`;
 
             wrapper.classList.add('is-collapsed');
             toggle.classList.add('is-visible');
@@ -308,6 +316,7 @@
             toggle.addEventListener('click', () => {
                 const isCollapsed = wrapper.classList.toggle('is-collapsed');
                 toggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+                content.style.maxHeight = isCollapsed ? `${collapsedHeight}px` : '';
 
                 if (label instanceof HTMLElement) {
                     label.textContent = isCollapsed ? readMoreText : readLessText;
