@@ -2456,7 +2456,10 @@ ol {
     position: relative;
 }
 
-.cmbcore-description.is-collapsed .cmbcore-prose {
+.cmbcore-description.is-collapsed [data-description-content] {
+    /* Fallback ~3-line clip so there's no flash of full content before JS
+       measures the real line-height and sets a precise pixel max-height. */
+    max-height: 4.8em;
     overflow: hidden;
 }
 
@@ -2500,7 +2503,7 @@ ol {
     transition: transform 0.2s ease;
 }
 
-.cmbcore-description.is-collapsed .cmbcore-description__toggle i {
+.cmbcore-description:not(.is-collapsed) .cmbcore-description__toggle i {
     transform: rotate(180deg);
 }
 

@@ -111,8 +111,21 @@
                     @endif
 
                     @if (!empty($product['short_description_html']))
-                        <div class="cmbcore-product-summary__lead">
-                            {!! $product['short_description_html'] !!}
+                        <div class="cmbcore-description is-collapsed" data-cmbcore-description>
+                            <div class="cmbcore-product-summary__lead" data-description-content>
+                                {!! $product['short_description_html'] !!}
+                            </div>
+                            <button
+                                type="button"
+                                class="cmbcore-description__toggle"
+                                data-description-toggle
+                                data-read-more-text="{{ theme_text('products.read_more') }}"
+                                data-read-less-text="{{ theme_text('products.read_less') }}"
+                                aria-expanded="false"
+                            >
+                                <span data-description-toggle-label>{{ theme_text('products.read_more') }}</span>
+                                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                            </button>
                         </div>
                     @endif
 
@@ -209,7 +222,7 @@
                     <span>{{ theme_text('products.procedure_kicker') }}</span>
                     <h2>{{ theme_text('products.description_tab') }}</h2>
                 </header>
-                <div class="cmbcore-description" data-cmbcore-description>
+                <div class="cmbcore-description is-collapsed" data-cmbcore-description>
                     <div class="cmbcore-prose" data-description-content>
                         {!! $product['description_html'] ?? '' !!}
                     </div>
@@ -219,10 +232,10 @@
                         data-description-toggle
                         data-read-more-text="{{ theme_text('products.read_more') }}"
                         data-read-less-text="{{ theme_text('products.read_less') }}"
-                        aria-expanded="true"
+                        aria-expanded="false"
                     >
-                        <span data-description-toggle-label>{{ theme_text('products.read_less') }}</span>
-                        <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+                        <span data-description-toggle-label>{{ theme_text('products.read_more') }}</span>
+                        <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
                     </button>
                 </div>
             </section>

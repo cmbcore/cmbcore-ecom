@@ -486,14 +486,18 @@
                 return;
             }
 
-            // Derive the collapsed height from the rendered line-height so "3 dòng"
-            // stays correct regardless of the theme's font-size/line-height settings.
+            // The wrapper renders collapsed by default (server-side) so there's no
+            // flash of full content before this script runs. Derive the exact
+            // collapsed height from the rendered line-height so "3 dòng" stays
+            // correct regardless of the theme's font-size/line-height settings.
             const lineHeight = Number.parseFloat(window.getComputedStyle(content).lineHeight) || 24;
             const collapsedHeight = Math.round(lineHeight * collapsedLines);
 
-            // Only collapse (and show the toggle) when the content actually spans
-            // more than the collapsed line count — short descriptions stay as-is.
+            // Short descriptions that never actually overflow the collapsed
+            // height don't need a toggle — reveal them fully.
             if (content.scrollHeight <= collapsedHeight + lineHeight) {
+                wrapper.classList.remove('is-collapsed');
+
                 return;
             }
 
@@ -502,14 +506,7 @@
 
             wrapper.style.setProperty('--cmbcore-description-fade', `${Math.round(lineHeight)}px`);
             content.style.maxHeight = `${collapsedHeight}px`;
-
-            wrapper.classList.add('is-collapsed');
             toggle.classList.add('is-visible');
-            toggle.setAttribute('aria-expanded', 'false');
-
-            if (label instanceof HTMLElement) {
-                label.textContent = readMoreText;
-            }
 
             toggle.addEventListener('click', () => {
                 const isCollapsed = wrapper.classList.toggle('is-collapsed');
