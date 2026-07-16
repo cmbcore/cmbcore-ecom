@@ -209,8 +209,21 @@
                     <span>{{ theme_text('products.procedure_kicker') }}</span>
                     <h2>{{ theme_text('products.description_tab') }}</h2>
                 </header>
-                <div class="cmbcore-prose">
-                    {!! $product['description_html'] ?? '' !!}
+                <div class="cmbcore-description" data-cmbcore-description>
+                    <div class="cmbcore-prose" data-description-content>
+                        {!! $product['description_html'] ?? '' !!}
+                    </div>
+                    <button
+                        type="button"
+                        class="cmbcore-description__toggle"
+                        data-description-toggle
+                        data-read-more-text="{{ theme_text('products.read_more') }}"
+                        data-read-less-text="{{ theme_text('products.read_less') }}"
+                        aria-expanded="true"
+                    >
+                        <span data-description-toggle-label>{{ theme_text('products.read_less') }}</span>
+                        <i class="fa-solid fa-chevron-up" aria-hidden="true"></i>
+                    </button>
                 </div>
             </section>
 

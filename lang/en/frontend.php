@@ -108,6 +108,8 @@ return [
         'buy_now' => 'Buy now',
         'procedure_kicker' => 'Product data',
         'description_tab' => 'Description',
+        'read_more' => 'Read more',
+        'read_less' => 'Show less',
         'category_sidebar_title' => 'Product categories',
         'detail_fields' => [
             'brand' => 'Brand',

@@ -276,6 +276,50 @@
         });
     }
 
+    function initDescriptionToggle() {
+        const collapsedHeight = 360;
+
+        document.querySelectorAll('[data-cmbcore-description]').forEach((wrapper) => {
+            const content = wrapper.querySelector('[data-description-content]');
+            const toggle = wrapper.querySelector('[data-description-toggle]');
+            const label = toggle?.querySelector('[data-description-toggle-label]');
+
+            if (!(content instanceof HTMLElement) || !(toggle instanceof HTMLButtonElement)) {
+                return;
+            }
+
+            // Only collapse (and show the toggle) when the content actually
+            // overflows the collapsed height — short descriptions stay as-is.
+            if (content.scrollHeight <= collapsedHeight + 40) {
+                return;
+            }
+
+            const readMoreText = toggle.getAttribute('data-read-more-text') || 'Xem thêm';
+            const readLessText = toggle.getAttribute('data-read-less-text') || 'Thu gọn';
+
+            wrapper.classList.add('is-collapsed');
+            toggle.classList.add('is-visible');
+            toggle.setAttribute('aria-expanded', 'false');
+
+            if (label instanceof HTMLElement) {
+                label.textContent = readMoreText;
+            }
+
+            toggle.addEventListener('click', () => {
+                const isCollapsed = wrapper.classList.toggle('is-collapsed');
+                toggle.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+
+                if (label instanceof HTMLElement) {
+                    label.textContent = isCollapsed ? readMoreText : readLessText;
+                }
+
+                if (isCollapsed) {
+                    wrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     function initToc() {
         document.querySelectorAll('[data-cmbcore-toc]').forEach((toc) => {
             const toggles = toc.querySelectorAll('[data-cmbcore-toc-toggle]');
@@ -422,6 +466,7 @@
     initGallery();
     initQuantity();
     initProductSwatches();
+    initDescriptionToggle();
     initToc();
     initTocInline();
     initFlashSaleCountdown();

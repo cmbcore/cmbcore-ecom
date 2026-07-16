@@ -108,6 +108,8 @@ return [
         'buy_now' => 'Mua ngay',
         'procedure_kicker' => 'Dữ liệu sản phẩm',
         'description_tab' => 'Mô tả',
+        'read_more' => 'Xem thêm',
+        'read_less' => 'Thu gọn',
         'category_sidebar_title' => 'Danh mục sản phẩm',
         'detail_fields' => [
             'brand' => 'Thương hiệu',
