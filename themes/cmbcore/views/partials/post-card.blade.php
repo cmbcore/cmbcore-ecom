@@ -34,7 +34,7 @@
             <a href="{{ $postUrl }}">{{ $post['title'] }}</a>
         </h3>
         @if (!empty($post['excerpt']))
-            <p class="cmbcore-post-card__excerpt">{{ $post['excerpt'] }}</p>
+            <div class="cmbcore-post-card__excerpt">{!! $post['excerpt'] !!}</div>
         @endif
         <a class="cmbcore-post-card__readmore" href="{{ $postUrl }}">
             {{ theme_text('blog.read_more') }} <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>

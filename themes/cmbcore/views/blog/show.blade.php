@@ -87,7 +87,7 @@
                     {{-- Excerpt --}}
                     @if (!empty($post['excerpt']))
                         <div class="cmbcore-article__excerpt">
-                            <p>{{ $post['excerpt'] }}</p>
+                            {!! $post['excerpt'] !!}
                         </div>
                     @endif
 

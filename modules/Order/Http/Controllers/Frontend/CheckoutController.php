@@ -6,9 +6,11 @@ namespace Modules\Order\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Modules\Order\Http\Requests\PlaceOrderRequest;
 use Modules\Order\Services\OrderService;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CheckoutController extends Controller
 {
@@ -79,6 +81,12 @@ class CheckoutController extends Controller
 
         try {
             $order = $this->orderService->placeOrder($payload, $request->user());
+        } catch (HttpException|ModelNotFoundException $exception) {
+            $message = $exception instanceof ModelNotFoundException
+                ? __('frontend.cart.messages.product_unavailable')
+                : ($exception->getMessage() !== '' ? $exception->getMessage() : __('frontend.checkout.messages.empty_cart'));
+
+            return back()->withErrors(['checkout' => $message])->withInput();
         } finally {
             // Always clear the buy_now session — even on exception — so the user
             // is not stuck in the buy_now flow after a failed placement attempt.

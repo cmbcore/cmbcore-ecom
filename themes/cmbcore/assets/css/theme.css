@@ -1735,7 +1735,7 @@ ol {
 }
 
 .cmbcore-hero__slide img {
-    min-height: clamp(340px, 42vw, 560px);
+    aspect-ratio: 1536 / 606;
     object-fit: cover;
 }
 
@@ -2564,6 +2564,10 @@ ol {
     overflow: hidden;
 }
 
+.cmbcore-post-card__excerpt p {
+    margin: 0;
+}
+
 .cmbcore-post-card__readmore {
     display: inline-flex;
     align-items: center;
@@ -3362,7 +3366,7 @@ ol {
     }
 
     .cmbcore-hero__slide img {
-        min-height: 320px;
+        aspect-ratio: 750 / 504;
     }
 
     .cmbcore-archive-header h1,

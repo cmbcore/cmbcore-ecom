@@ -20,6 +20,10 @@
                     <div class="cmbcore-alert is-success">{{ session('status') }}</div>
                 @endif
 
+                @if ($errors->any())
+                    <div class="cmbcore-alert is-danger">{{ $errors->first() }}</div>
+                @endif
+
                 <div class="cmbcore-table-card">
                     <table class="cmbcore-table">
                         <thead>

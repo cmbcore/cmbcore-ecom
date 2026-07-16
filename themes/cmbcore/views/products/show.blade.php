@@ -2,11 +2,16 @@
     $product = theme_context('product', []);
     $media = collect($product['media'] ?? []);
     $primaryMedia = $media->first();
-    $attributes = collect($product['skus'] ?? [])
+    // Only "active" SKUs are purchasable (see CartService::resolvePurchasableSku) — an
+    // inactive SKU picked as the default here would submit an ID the backend rejects,
+    // so both the swatches and the hidden sku input must only ever offer active ones.
+    $purchasableSkus = collect($product['skus'] ?? [])->where('status', 'active')->values();
+    $product['skus'] = $purchasableSkus->all();
+    $attributes = $purchasableSkus
         ->flatMap(fn (array $sku): array => $sku['attributes'] ?? [])
         ->groupBy('attribute_name')
         ->map(fn (\Illuminate\Support\Collection $items): array => $items->pluck('attribute_value')->unique()->values()->all());
-    $defaultSku = collect($product['skus'] ?? [])->first();
+    $defaultSku = $purchasableSkus->first();
     $defaultComparePrice = $defaultSku['compare_price'] ?? $product['min_compare_price'] ?? null;
     $defaultPrice = $defaultSku['price'] ?? $product['min_price'] ?? null;
     $defaultDiscount = (is_numeric($defaultComparePrice) && is_numeric($defaultPrice) && (float) $defaultComparePrice > (float) $defaultPrice)
@@ -55,6 +60,9 @@
 
                 {{-- Summary --}}
                 <div class="cmbcore-product-summary" data-cmbcore-product data-product='@json($product)'>
+                    @if ($errors->any())
+                        <div class="cmbcore-alert is-danger">{{ $errors->first() }}</div>
+                    @endif
                     @if (!empty($product['category']['name']))
                         <a class="cmbcore-product-summary__category" href="{{ theme_route_url('storefront.product-categories.show', ['slug' => $product['category']['slug']]) }}">
                             {{ $product['category']['name'] }}
@@ -141,13 +149,17 @@
                         <button type="button" data-quantity-step="1">+</button>
                     </div>
 
-                    <form method="post" action="{{ route('storefront.cart.store') }}" class="cmbcore-product-summary__actions" data-product-purchase-form>
-                        @csrf
-                        <input type="hidden" name="product_sku_id" value="{{ $defaultSku['id'] ?? '' }}" data-product-sku-input>
-                        <input type="hidden" name="quantity" value="1" data-product-quantity-input>
-                        <button type="submit" class="cmbcore-button is-secondary cmbcore-button--uppercase">THÊM VÀO GIỎ HÀNG</button>
-                        <button type="submit" formaction="{{ route('storefront.checkout.buy_now') }}" class="cmbcore-button is-primary cmbcore-button--uppercase">MUA NGAY</button>
-                    </form>
+                    @if ($defaultSku)
+                        <form method="post" action="{{ route('storefront.cart.store') }}" class="cmbcore-product-summary__actions" data-product-purchase-form>
+                            @csrf
+                            <input type="hidden" name="product_sku_id" value="{{ $defaultSku['id'] ?? '' }}" data-product-sku-input>
+                            <input type="hidden" name="quantity" value="1" data-product-quantity-input>
+                            <button type="submit" class="cmbcore-button is-secondary cmbcore-button--uppercase">THÊM VÀO GIỎ HÀNG</button>
+                            <button type="submit" formaction="{{ route('storefront.checkout.buy_now') }}" class="cmbcore-button is-primary cmbcore-button--uppercase">MUA NGAY</button>
+                        </form>
+                    @else
+                        <div class="cmbcore-alert is-danger">Sản phẩm hiện không thể mua.</div>
+                    @endif
 
                     {{-- Benefit icons grid --}}
                     <div class="cmbcore-product-benefits">
