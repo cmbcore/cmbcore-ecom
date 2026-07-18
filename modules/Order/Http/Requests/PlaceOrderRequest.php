@@ -13,6 +13,24 @@ class PlaceOrderRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->input('mode') !== 'buy_now' || $this->filled('product_sku_id')) {
+            return;
+        }
+
+        $buyNow = (array) session('checkout.buy_now');
+
+        if ($buyNow === []) {
+            return;
+        }
+
+        $this->merge([
+            'product_sku_id' => $buyNow['product_sku_id'] ?? null,
+            'quantity' => $this->filled('quantity') ? $this->input('quantity') : ($buyNow['quantity'] ?? null),
+        ]);
+    }
+
     public function rules(): array
     {
         $user = $this->user();

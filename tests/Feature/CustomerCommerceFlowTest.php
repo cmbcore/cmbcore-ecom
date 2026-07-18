@@ -136,6 +136,35 @@ class CustomerCommerceFlowTest extends TestCase
             ->assertJsonPath('data.shipping_phone', '0900000003');
     }
 
+    public function test_guest_can_place_order_via_buy_now_flow(): void
+    {
+        $sku = $this->createPurchasableSku();
+
+        $this->post(route('storefront.checkout.buy_now'), [
+            'product_sku_id' => $sku->id,
+            'quantity' => 1,
+        ])->assertRedirect(route('storefront.checkout.index', ['mode' => 'buy_now']));
+
+        $response = $this->post(route('storefront.checkout.place_order'), [
+            'mode' => 'buy_now',
+            'customer_name' => 'Buy Now Buyer',
+            'customer_phone' => '0900000009',
+            'guest_email' => 'buynow@example.com',
+            'recipient_name' => 'Buy Now Buyer',
+            'shipping_phone' => '0900000009',
+            'province' => 'HCM',
+            'district' => 'District 1',
+            'ward' => 'Ben Nghe',
+            'address_line' => '1 Nguyen Hue',
+        ]);
+
+        $response->assertSessionHasNoErrors();
+        $response->assertRedirect();
+
+        $order = Order::query()->with('items')->firstOrFail();
+        self::assertSame($sku->id, (int) $order->items->first()->product_sku_id);
+    }
+
     private function createPurchasableSku(): ProductSku
     {
         $category = Category::query()->create([
