@@ -42,12 +42,7 @@ class PlaceOrderRequest extends FormRequest
             'quantity' => ['nullable', 'integer', 'min:1'],
             'customer_name' => ['required', 'string', 'max:255'],
             'customer_phone' => ['required', 'string', 'max:30'],
-            'guest_email' => [
-                $user === null ? 'required' : 'nullable',
-                'nullable',
-                'email',
-                'max:255',
-            ],
+            'guest_email' => ['nullable', 'email', 'max:255'],
             'address_id' => ['nullable', 'integer'],
             'shipping_method_id' => ['nullable', 'integer', 'exists:shipping_methods,id'],
             'coupon_code' => ['nullable', 'string', 'max:100'],

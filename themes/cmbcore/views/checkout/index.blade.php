@@ -418,7 +418,7 @@
 
                         @if (! $customer)
                             <label class="is-full">
-                                <span>Email nhận xác nhận đơn hàng<span class="ck-field__required">*</span></span>
+                                <span>Email nhận xác nhận đơn hàng <span style="color:#94a3b8;font-weight:400;">(không bắt buộc)</span></span>
                                 <input
                                     id="ck-guest-email"
                                     type="email"
@@ -426,7 +426,6 @@
                                     value="{{ old('guest_email') }}"
                                     placeholder="email@example.com"
                                     autocomplete="email"
-                                    data-required="true"
                                     data-type="email"
                                 >
                                 <span class="ck-field-error" data-for="ck-guest-email">Địa chỉ email không hợp lệ.</span>
@@ -455,34 +454,9 @@
                             </label>
                         @endif
 
-                        <label>
-                            <span>Người nhận hàng<span class="ck-field__required">*</span></span>
-                            <input
-                                id="ck-recipient-name"
-                                type="text"
-                                name="recipient_name"
-                                value="{{ old('recipient_name', $customer?->name) }}"
-                                placeholder="Tên người nhận"
-                                autocomplete="name"
-                                data-required="true"
-                            >
-                            <span class="ck-field-error" data-for="ck-recipient-name">Vui lòng nhập tên người nhận.</span>
-                        </label>
-
-                        <label>
-                            <span>SĐT người nhận<span class="ck-field__required">*</span></span>
-                            <input
-                                id="ck-shipping-phone"
-                                type="tel"
-                                name="shipping_phone"
-                                value="{{ old('shipping_phone', $customer?->phone) }}"
-                                placeholder="VD: 0912345678"
-                                autocomplete="tel"
-                                data-required="true"
-                                data-pattern="^(0|\+84)[0-9]{9}$"
-                            >
-                            <span class="ck-field-error" data-for="ck-shipping-phone">Số điện thoại không hợp lệ.</span>
-                        </label>
+                        {{-- Người nhận hàng dùng chung Họ và tên / SĐT ở trên, tránh lặp lại thông tin --}}
+                        <input type="hidden" id="ck-recipient-name" name="recipient_name" value="{{ old('customer_name', $customer?->name) }}">
+                        <input type="hidden" id="ck-shipping-phone" name="shipping_phone" value="{{ old('customer_phone', $customer?->phone) }}">
 
                         {{-- Province searchable select --}}
                         <label>
@@ -974,6 +948,21 @@
 
     /* ── Form validation ───────────────────────────────────────── */
     const form = document.getElementById('ck-form');
+
+    /* ── Đồng bộ người nhận hàng theo Họ và tên / SĐT (đã bỏ field lặp) ── */
+    const recipientNameInput = document.getElementById('ck-recipient-name');
+    const shippingPhoneInput = document.getElementById('ck-shipping-phone');
+    const customerNameInput = document.getElementById('ck-customer-name');
+    const customerPhoneInput = document.getElementById('ck-customer-phone');
+
+    function syncRecipientFields() {
+        recipientNameInput.value = customerNameInput.value;
+        shippingPhoneInput.value = customerPhoneInput.value;
+    }
+
+    customerNameInput.addEventListener('input', syncRecipientFields);
+    customerPhoneInput.addEventListener('input', syncRecipientFields);
+    form.addEventListener('submit', syncRecipientFields);
 
     function showError(el, msg) {
         el.classList.add('ck-input-error');
