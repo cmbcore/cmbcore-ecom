@@ -3540,6 +3540,13 @@ ol {
         width: min(calc(100% - 24px), 1310px);
     }
 
+    .cmbcore-shelf__banner {
+        width: calc(100% + 24px);
+        margin-left: -12px;
+        margin-right: -12px;
+        border-radius: 0;
+    }
+
     .cmbcore-breadcrumbs {
         margin-bottom: 12px;
         font-size: 11px;
