@@ -336,6 +336,7 @@ export default function ThemeSettings() {
 
         const schemaGroups = (configuration.settings_schema ?? []).map((group) => ({
             key: group.group,
+            forceRender: true,
             label: (
                 <span className="theme-settings-tab__label">
                     <FontIcon name={getGroupIcon(group.group)} />
@@ -377,6 +378,7 @@ export default function ThemeSettings() {
         if ((configuration.menus ?? []).length > 0) {
             schemaGroups.push({
                 key: '__menus__',
+                forceRender: true,
                 label: (
                     <span className="theme-settings-tab__label">
                         <FontIcon name="menu" />

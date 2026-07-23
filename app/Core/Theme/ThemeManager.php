@@ -223,12 +223,6 @@ class ThemeManager
             $storedSettings,
         );
 
-        Log::info('[ThemeManager] configuration() returning', [
-            'alias'    => $alias,
-            'logo_alt' => $finalSettings['logo_alt'] ?? 'N/A',
-            'company'  => $finalSettings['footer_contact']['company'] ?? 'N/A',
-        ]);
-
         return [
             'theme'           => $this->themePayload($theme),
             'settings_schema' => $this->resolvedSettingsSchema($theme),
@@ -265,7 +259,12 @@ class ThemeManager
 
         $currentSettings = is_array($themeRecord->settings) ? $themeRecord->settings : [];
         $normalizedNew   = $this->normalizeThemeSettings($theme, $settings);
-        $normalizedMenus = $this->normalizeThemeMenus($theme, $menus);
+
+        // Menus are edited as a whole tab; an empty $menus payload means the
+        // Menus tab wasn't part of this submission (not "delete every menu").
+        $normalizedMenus = $menus === []
+            ? Arr::wrap($currentSettings['menus'] ?? [])
+            : $this->normalizeThemeMenus($theme, $menus);
 
         $merged = array_replace(
             Arr::except($currentSettings, ['menus']),
@@ -274,19 +273,12 @@ class ThemeManager
         );
 
         // Use raw DB update to bypass Eloquent cast re-encoding and avoid stale model issues
-        $rowCount = DB::table('installed_themes')
+        DB::table('installed_themes')
             ->where('alias', $alias)
             ->update([
                 'settings'   => json_encode($merged, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
                 'updated_at' => now(),
             ]);
-
-        Log::info('[ThemeManager] updateConfiguration DB update', [
-            'alias'     => $alias,
-            'rowCount'  => $rowCount,
-            'logo_alt'  => $merged['logo_alt'] ?? 'N/A',
-            'company'   => $merged['footer_contact']['company'] ?? 'N/A',
-        ]);
 
         // Reset sync flag so next configuration() call re-reads fresh data from DB
         $this->themesSynced = false;
